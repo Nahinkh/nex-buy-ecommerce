@@ -1,10 +1,7 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
-# --- General Dependencies ---
+# --- Dependencies ---
 node_modules/
 .pnp/
 .pnp.*
-
 
 # --- Yarn Berry ---
 .yarn/*
@@ -14,20 +11,24 @@ node_modules/
 !.yarn/versions
 
 # --- Frontend: Next.js ---
-.next/
-out/
-.vercel
-.env.local
-.env.development
-.env.production
-.env*
+frontend/.next/
+frontend/out/
+frontend/.vercel
+frontend/.env.local
+frontend/.env.development
+frontend/.env.production
+frontend/.env*
 
-# --- Backend: Node.js / Express / NestJS / etc ---
-dist/
-build/
-logs/
-*.log
-*.tsbuildinfo
+# --- Backend: Node.js / Express / NestJS ---
+backend/dist/
+backend/build/
+backend/logs/
+backend/*.log
+backend/*.tsbuildinfo
+backend/.env.local
+backend/.env.development
+backend/.env.production
+backend/.env*
 
 # --- Testing ---
 coverage/
