@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { persist as zustandPersist } from "zustand/middleware";
 
 type CartItem = {
   id: string;
@@ -17,40 +18,50 @@ type CartState = {
     decreaseQuantity: (id: string) => void;
 }
 
-export const useCartStore = create<CartState>((set) => ({
-    cartItems: [],
-    addToCart: (item) => set((state) => {
-        const existingItem = state.cartItems.find(cartItem => cartItem.id === item.id);
-        if (existingItem) {
-            return {
-                cartItems: state.cartItems.map(cartItem =>
-                    cartItem.id === item.id
-                        ? { ...cartItem, quantity: cartItem.quantity + item.quantity }
-                        : cartItem
-                )
-            };
-        }
-        return { cartItems: [...state.cartItems, item] };
-    }),
-    removeFromCart: (id) => set((state) => ({
-        cartItems: state.cartItems.filter(cartItem => cartItem.id !== id)
-    })),
-    clearCart: () => set(() => ({
-        cartItems: []
-    })),
-    increaseQuantity: (id) => set((state) => ({
-        cartItems: state.cartItems.map(cartItem =>
-            cartItem.id === id
-                ? { ...cartItem, quantity: cartItem.quantity + 1 }
-                : cartItem
-        )
-    })),
-    decreaseQuantity: (id) => set((state) => ({
-        cartItems: state.cartItems.map(cartItem =>
-            cartItem.id === id
-                ? { ...cartItem, quantity: Math.max(cartItem.quantity - 1, 1) }
-                : cartItem
-        )
-    })),
+export const useCartStore = create<CartState>()(
+    zustandPersist(
+        (set) => ({
+            cartItems: [],
 
-}))
+            addToCart: (item) =>
+                set((state) => {
+                    const existing = state.cartItems.find((p) => p.id === item.id);
+                    if (existing) {
+                        return {
+                            cartItems: state.cartItems.map((p) =>
+                                p.id === item.id ? { ...p, quantity: p.quantity + item.quantity } : p
+                            ),
+                        };
+                    }
+                    return { cartItems: [...state.cartItems, item] };
+                }),
+
+            removeFromCart: (id) =>
+                set((state) => ({
+                    cartItems: state.cartItems.filter((item) => item.id !== id),
+                })),
+
+            clearCart: () => set({ cartItems: [] }),
+
+            increaseQuantity: (id) =>
+                set((state) => ({
+                    cartItems: state.cartItems.map((item) =>
+                        item.id === id ? { ...item, quantity: item.quantity + 1 } : item
+                    ),
+                })),
+
+            decreaseQuantity: (id) =>
+                set((state) => ({
+                    cartItems: state.cartItems.map((item) =>
+                        item.id === id && item.quantity > 1
+                            ? { ...item, quantity: item.quantity - 1 }
+                            : item
+                    ),
+                })),
+        }),
+        {
+            name: "cart-storage", // key in localStorage
+        }
+    )
+);
+
