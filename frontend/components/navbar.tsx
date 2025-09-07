@@ -59,7 +59,9 @@ const Navbar = () => {
             </Link>
 
             {/* Avatar Dropdown */}
-            <DropdownMenu>
+            {
+              user ? (
+                <DropdownMenu>
               <DropdownMenuTrigger>
                 <Avatar>
                   <AvatarImage src="/avatar.png" />
@@ -78,6 +80,14 @@ const Navbar = () => {
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
+              ):(
+                <Link href="/login">
+                <Button variant="outline" className="text-green-600 border-green-600 hover:bg-green-600 hover:text-white">
+                  Login
+                </Button>
+              </Link>
+              )
+            }
 
             {/* Mobile menu (hamburger) */}
             <div className="md:hidden">

@@ -2,6 +2,8 @@
 import { useCart } from '@/hooks/useCart'
 import Image from 'next/image';
 import React from 'react'
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 
 const CartPage = () => {
     const { cart, clearCart, removeFromCart, increaseQuantity, decreaseQuantity,total } = useCart();
@@ -37,28 +39,28 @@ const CartPage = () => {
 
               {/* Quantity Controls */}
               <div className="flex items-center gap-3">
-                <button
+                <Button
                   onClick={() => decreaseQuantity(item.id)}
                   className="px-2 py-1 border rounded"
                 >
                   -
-                </button>
+                </Button>
                 <span>{item.quantity}</span>
-                <button
+                <Button
                   onClick={() => increaseQuantity(item.id)}
                   className="px-2 py-1 border rounded"
                 >
                   +
-                </button>
+                </Button>
               </div>
 
               {/* Remove */}
-              <button
+              <Button
                 onClick={() => removeFromCart(item.id)}
                 className="text-red-500 hover:underline"
               >
                 Remove
-              </button>
+              </Button>
             </div>
           ))}
 
@@ -70,15 +72,17 @@ const CartPage = () => {
 
           {/* Actions */}
           <div className="flex justify-between mt-4">
-            <button
+            <Button
               onClick={clearCart}
               className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
             >
               Clear Cart
-            </button>
-            <button className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
-              Checkout
-            </button>
+            </Button>
+            <Link href="/checkout">
+            <Button className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600">
+              Proceed to Checkout 
+            </Button>
+            </Link>
           </div>
         </div>
       )}

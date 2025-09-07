@@ -1,3 +1,4 @@
+import { toast } from "sonner";
 import { create } from "zustand";
 import { persist as zustandPersist } from "zustand/middleware";
 
@@ -27,12 +28,16 @@ export const useCartStore = create<CartState>()(
                 set((state) => {
                     const existing = state.cartItems.find((p) => p.id === item.id);
                     if (existing) {
+                        toast.success(`Increased quantity of ${item.name} in cart!`);
                         return {
                             cartItems: state.cartItems.map((p) =>
-                                p.id === item.id ? { ...p, quantity: p.quantity + item.quantity } : p
+                                p.id === item.id
+                                    ? { ...p, quantity: p.quantity + item.quantity }
+                                    : p
                             ),
                         };
                     }
+                    toast.success(`${item.name} added to cart!`);
                     return { cartItems: [...state.cartItems, item] };
                 }),
 
@@ -44,21 +49,27 @@ export const useCartStore = create<CartState>()(
             clearCart: () => set({ cartItems: [] }),
 
             increaseQuantity: (id) =>
-                set((state) => ({
-                    cartItems: state.cartItems.map((item) =>
-                        item.id === id ? { ...item, quantity: item.quantity + 1 } : item
-                    ),
-                })),
+                set((state) => {
+                    toast.success("Increased item quantity in cart!");
+                    return {
+                        cartItems: state.cartItems.map((item) =>
+                            item.id === id ? { ...item, quantity: item.quantity + 1 } : item
+                        ),
+                    };
+                }),
 
             decreaseQuantity: (id) =>
-                set((state) => ({
-                    cartItems: state.cartItems.map((item) =>
-                        item.id === id && item.quantity > 1
-                            ? { ...item, quantity: item.quantity - 1 }
-                            : item
-                    ),
-                })),
-        }),
+                set((state) => {
+                    toast.success("Decreased item quantity in cart!");
+                    return {
+                        cartItems: state.cartItems.map((item) =>
+                            item.id === id && item.quantity > 1
+                                ? { ...item, quantity: item.quantity - 1 }
+                                : item
+                        ),
+                    };
+                }),
+                }),
         {
             name: "cart-storage", // key in localStorage
         }
