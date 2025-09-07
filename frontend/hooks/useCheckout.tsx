@@ -4,11 +4,13 @@ import { axiosInstance } from "@/lib/axios";
 
 export const useCheckout = () => {
     return useMutation({
-        mutationFn: async ({ cartItems, totalAmount, shippingAddress }: { cartItems: any[]; totalAmount: number; shippingAddress: any }) => {
+        mutationFn: async ({ cartItems, totalAmount, shippingAddress, paymentMethod, phone}: { cartItems: any[]; totalAmount: number; shippingAddress: any, paymentMethod: 'cod' | 'card' , phone: string }) => {
             const response = await axiosInstance.post("/order/create", {
                 items: cartItems,
                 totalAmount,
-                shippingAddress
+                shippingAddress,
+                paymentMethod,
+                phone
             });
             console.log(response.data);
             return response.data;

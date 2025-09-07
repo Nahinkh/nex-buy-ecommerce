@@ -9,7 +9,9 @@ interface Order {
     }[];
     totalAmount: number;
     shippingAddress: string;
+    paymentMethod: 'cod' | 'card';
     status: 'pending' | 'shipped' | 'delivered' | 'cancelled';
+    phone: string;
 }
 
 const orderSchema = new mongoose.Schema<Order>({
@@ -40,6 +42,15 @@ const orderSchema = new mongoose.Schema<Order>({
         required: true
     },
     shippingAddress: {
+        type: String,
+        required: true
+    },
+    paymentMethod: {
+        type: String,
+        enum: ['cod', 'card'],
+        default: 'cod'
+    },
+    phone: {
         type: String,
         required: true
     },

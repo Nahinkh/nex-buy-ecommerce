@@ -18,7 +18,6 @@ export const useProfile = () => {
     queryFn: async (): Promise<ProfileResponse> => {
       const res = await axiosInstance.get("/auth/profile");
       setUser(res.data);
-      console.log(res.data);
       return res.data;
     },
   })};

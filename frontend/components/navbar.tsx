@@ -13,7 +13,6 @@ import { useCart } from '@/hooks/useCart'
 const Navbar = () => {
     const { data: user } = useProfile();
     const {cart}=useCart()
-    console.log(cart.length)
     const [search, setSearch] = useState("");
     const logout = () => {
         axiosInstance.post("/auth/logout");

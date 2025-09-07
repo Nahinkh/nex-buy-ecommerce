@@ -5,7 +5,7 @@ import mongoose from "mongoose";
 
 export const createOrder = asyncHandler(async (req: Request, res: Response) => {
     try {
-    const { items, totalAmount, shippingAddress } = req.body;
+    const { items, totalAmount, shippingAddress, phone, paymentMethod } = req.body;
     const user = (req as Request & { user?: { _id: string } }).user;
 
     if (!user) {
@@ -22,10 +22,10 @@ export const createOrder = asyncHandler(async (req: Request, res: Response) => {
     // Validate items
     const validItems = items.map((item: any) => {
         if (!mongoose.Types.ObjectId.isValid(item.id)) {
-            throw new Error(`Invalid product ID: ${item.product}`);
+            throw new Error(`Invalid product ID: ${item.id}`);
         }
         return {
-            product: new mongoose.Types.ObjectId(item.product),
+            product: new mongoose.Types.ObjectId(item.id),
             quantity: item.quantity,
             price: item.price,
         };
@@ -37,6 +37,8 @@ export const createOrder = asyncHandler(async (req: Request, res: Response) => {
         items: validItems,
         totalAmount,
         shippingAddress,
+        paymentMethod,
+        phone
     });
 
     console.log(order);
