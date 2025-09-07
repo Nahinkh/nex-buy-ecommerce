@@ -8,9 +8,12 @@ import { axiosInstance } from '@/lib/axios'
 import { ShoppingCart } from 'lucide-react'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from './ui/dropdown-menu'
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar'
+import { useCart } from '@/hooks/useCart'
 
 const Navbar = () => {
     const { data: user } = useProfile();
+    const {cart}=useCart()
+    console.log(cart.length)
     const [search, setSearch] = useState("");
     const logout = () => {
         axiosInstance.post("/auth/logout");
@@ -48,10 +51,12 @@ const Navbar = () => {
             </div>
 
             {/* Cart */}
+            <Link href="/cart">
             <Button variant="ghost" className="relative">
               <ShoppingCart />
-              <span className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-4 h-4 text-xs flex items-center justify-center">3</span>
+              <span className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-4 h-4 text-xs flex items-center justify-center">{cart.length ? cart.length : 0}</span>
             </Button>
+            </Link>
 
             {/* Avatar Dropdown */}
             <DropdownMenu>
