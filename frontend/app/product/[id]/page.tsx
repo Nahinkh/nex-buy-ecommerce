@@ -7,19 +7,16 @@ import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import Link from 'next/link';
+import { useCart } from '@/hooks/useCart';
 
 
 const ProductDetailsPage = () => {
     const params = useParams();
     const id = params?.id as string;
     const [quantity, setQuantity] = useState(1);
-    const increaseQuantity = () => {
-        setQuantity((prev) => prev + 1);
-    };
-
-    const decreaseQuantity = () => {
-        setQuantity((prev) => (prev > 1 ? prev - 1 : 1));
-    };
+    const {addToCart,cart,increaseQuantity,decreaseQuantity} = useCart()
+    console.log(cart)
+    const inStock = true; // Replace with actual stock status from product data
 
     const { data: product, isLoading, error } = useSingleProduct(id);
     const productData = product?.product;
@@ -115,18 +112,26 @@ const ProductDetailsPage = () => {
                             ))}
                         </div>
                     )}
-                    {productData?.inStock && (
+                    {inStock && (
                         <div className="flex items-center gap-2 w-52">
-                            <Button className='bg-green-500 text-white hover:bg-green-600 transition' onClick={decreaseQuantity}>-</Button>
-                            <span className='font-medium p-4'>{quantity}</span>
-                            <Button className='bg-green-500 text-white hover:bg-green-600 transition' onClick={increaseQuantity}>+</Button>
+                            <Button className='bg-green-500 text-white hover:bg-green-600 transition' 
+                            onClick={() => decreaseQuantity(productData._id)} >-</Button>
+                            <span className='font-medium p-4'>{cart.find(item => item.id === productData._id)?.quantity ?? 1} </span>
+                            <Button className='bg-green-500 text-white hover:bg-green-600 transition' onClick={() => increaseQuantity(productData._id)}>+</Button>
                         </div>
                     )}
 
                     {/* Add to Cart Button */}
                     <Button
                         className="mt-6 w-full py-3.5 bg-green-500 text-white hover:bg-green-600 transition"
-                        disabled={!productData?.inStock}
+                        disabled={!inStock}
+                        onClick={() => addToCart({
+                            id: productData._id,
+                            name: productData.name,
+                            price: productData.price,
+                            quantity,
+                            image: productData.images[0] ? productData.images[0] : '',
+                        })}
                     >
                         Add to Cart
                     </Button>

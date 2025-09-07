@@ -6,14 +6,6 @@ import ProductCard from "@/components/product-card";
 import { useProducts } from "@/hooks/useProducts";
 import { Button } from "@/components/ui/button";
 
-// Example static products (replace with API fetch)
-// const products = [
-//   { id: 1, name: "iPhone 15", price: 1200, createdAt: "2025-08-10", image: "/images/iphone.png" },
-//   { id: 2, name: "Laptop Pro", price: 2200, createdAt: "2025-08-12", image: "/images/laptop.png" },
-//   { id: 3, name: "Smart Watch", price: 300, createdAt: "2025-07-01", image: "/images/watch.png" },
-//   { id: 4, name: "Headphones", price: 150, createdAt: "2025-09-01", image: "/images/headphones.png" },
-// ];
-
 export default function ProductsPage() {
   const [sortBy, setSortBy] = useState("newest");
     const [currentPage, setCurrentPage] = useState(1);
