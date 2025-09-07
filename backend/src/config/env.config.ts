@@ -7,6 +7,9 @@ export const envConfig = {
   nodeEnv: process.env.NODE_ENV as string,
   cloudName: process.env.CLOUDINARY_CLOUD_NAME as string,
   apiKey: process.env.CLOUDINARY_API_KEY as string,
-  apiSecret: process.env.CLOUDINARY_API_SECRET as string
-  
+  apiSecret: process.env.CLOUDINARY_API_SECRET as string,
+  stripe: {
+    secretKey: process.env.STRIPE_SECRET_KEY as string,
+    publishableKey: process.env.STRIPE_PUBLISHABLE_KEY as string,
+  },
 };
