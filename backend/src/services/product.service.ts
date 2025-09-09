@@ -1,6 +1,7 @@
 import { uploadToCloudinary } from "../helper/uploadToCloudinary";
 import Category from "../models/Category";
 import Product from "../models/Product";
+import { Types } from "mongoose";
 
 export const handleImageUpload = async (files: Express.Multer.File[], category: string): Promise<string[]> => {
    const imageUrls: string[] = [];
@@ -15,7 +16,7 @@ export const handleImageUpload = async (files: Express.Multer.File[], category: 
       return imageUrls;
 };
 
-import { Types } from "mongoose";
+
 
 export const handleCategory = async (category: string, newCategory?: string): Promise<Types.ObjectId> => {
   if (category === "new-category" && newCategory) {
@@ -41,7 +42,7 @@ export const updateProductService = async (
     price?: number;
     category?: string;
     newCategory?: string;
-    attributes?: Record<string, string>;
+    attributes?: { key: string; value: string }[];
     inStock?: boolean;
     files?: Express.Multer.File[];
     keepExistingImages?: string[];

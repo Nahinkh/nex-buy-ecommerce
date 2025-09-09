@@ -13,8 +13,7 @@ export const paymentwithCard = asyncHandler(async (req: Request, res: Response) 
         event = stripeConfig.webhooks.constructEvent(req.body, signature!, envConfig.stripe.webhookSecret!);
         if (event.type === 'payment_intent.succeeded') {
             const paymentIntent = event.data.object as Stripe.PaymentIntent;
-            // Handle successful payment here, e.g., update order status in your database
-            console.log(`PaymentIntent for ${paymentIntent.amount} was successful!`);
+            // Handle successful payment here, e.g., update order status in your databases
             res.status(200).json({ received: true });
             try {
                 const { userId, items, totalAmount, shippingAddress, phone, paymentMethod } = paymentIntent.metadata;

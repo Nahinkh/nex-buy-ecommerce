@@ -10,13 +10,18 @@ import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { axiosInstance } from "@/lib/axios";
 
+interface Attribute {
+  key: string;
+  value: string;
+}
+
 interface ProductFormData {
   name: string;
   price: string;
   category: string;
   description: string;
   inStock: boolean;
-  attributes: Record<string, string>;
+  attributes: Attribute[];   // ✅ array now
   newCategory?: string;
 }
 
@@ -28,7 +33,7 @@ export default function AddProductPage() {
     category: "",
     description: "",
     inStock: true,
-    attributes: {},
+    attributes: [],
     newCategory: "",
   });
   const [categories] = useState(["Electronics", "Clothing", "Books"]);
@@ -42,34 +47,32 @@ export default function AddProductPage() {
   };
 
   // Add a new empty attribute
-const addAttribute = () => {
-  setFormData({
-    ...formData,
-    attributes: { ...formData.attributes, "": "" } // empty key, user will type
-  });
-};
+  const addAttribute = () => {
+    setFormData({
+      ...formData,
+      attributes: [...formData.attributes, { key: "", value: "" }],
+    });
+  };
 
-// Remove attribute by key
-const removeAttribute = (key: string) => {
-  const updated = { ...formData.attributes };
-  delete updated[key];
-  setFormData({ ...formData, attributes: updated });
-};
+  // Remove attribute by key
+  const removeAttribute = (index: number) => {
+    const updated = [...formData.attributes];
+    updated.splice(index, 1);
+    setFormData({ ...formData, attributes: updated });
+  };
 
-// Update either key or value
-const updateAttributeKey = (oldKey: string, newKey: string) => {
-  const updated = { ...formData.attributes };
-  updated[newKey] = updated[oldKey];
-  if (oldKey !== newKey) delete updated[oldKey];
-  setFormData({ ...formData, attributes: updated });
-};
+  // Update either key or value
+  const updateAttributeKey = (index: number, newKey: string) => {
+    const updated = [...formData.attributes];
+    updated[index].key = newKey;
+    setFormData({ ...formData, attributes: updated });
+  };
 
-const updateAttributeValue = (key: string, value: string) => {
-  setFormData({
-    ...formData,
-    attributes: { ...formData.attributes, [key]: value }
-  });
-};
+  const updateAttributeValue = (index: number, newValue: string) => {
+    const updated = [...formData.attributes];
+    updated[index].value = newValue;
+    setFormData({ ...formData, attributes: updated });
+  };
   // Handle form submit
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -148,34 +151,42 @@ const updateAttributeValue = (key: string, value: string) => {
         </div>
 
         {/* Attributes */}
-       <div>
-  <Label>Attributes</Label>
-  <div className="space-y-2 mt-2">
-    {Object.entries(formData.attributes).map(([key, value]) => (
-      <div key={key} className="flex gap-2 items-center">
-        <Input
-          placeholder="Key"
-          value={key}
-          onChange={(e) => updateAttributeKey(key, e.target.value)}
-          className="w-1/3"
-        />
-        <Input
-          placeholder="Value"
-          value={value}
-          onChange={(e) => updateAttributeValue(key, e.target.value)}
-          className="w-2/3"
-        />
-        <Button type="button" variant="ghost" onClick={() => removeAttribute(key)}>
-          <X className="h-4 w-4" />
-        </Button>
-      </div>
-    ))}
-  </div>
-  <Button type="button" variant="outline" className="mt-2" onClick={addAttribute}>
-    <Plus className="h-4 w-4 mr-2" /> Add Attribute
-  </Button>
-</div>
-
+        <div>
+          <Label>Attributes</Label>
+          <div className="space-y-2 mt-2">
+            {formData.attributes.map((attr, index) => (
+              <div key={index} className="flex gap-2 items-center">
+                <Input
+                  placeholder="Key"
+                  value={attr.key}
+                  onChange={(e) => updateAttributeKey(index, e.target.value)}
+                  className="w-1/3"
+                />
+                <Input
+                  placeholder="Value"
+                  value={attr.value}
+                  onChange={(e) => updateAttributeValue(index, e.target.value)}
+                  className="w-2/3"
+                />
+                <Button
+                  type="button"
+                  variant="ghost"
+                  onClick={() => removeAttribute(index)}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+            ))}
+          </div>
+          <Button
+            type="button"
+            variant="outline"
+            className="mt-2"
+            onClick={addAttribute}
+          >
+            <Plus className="h-4 w-4 mr-2" /> Add Attribute
+          </Button>
+        </div>
         {/* Description */}
         <div>
           <Label>Description</Label>

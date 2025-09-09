@@ -8,7 +8,7 @@ interface IProduct extends Document {
   category: mongoose.Schema.Types.ObjectId;
   inStock: boolean;
   newCategory?: string;
-  attributes: Record<string, string>; // object key-value
+  attributes:{key: string; value: string}[]; 
   images: string[];
 }
 
@@ -32,11 +32,12 @@ name: {
         ref: "Category",
         required: true
     },
-  attributes: {
-    type: Map,
-    of: String, // each key/value is a string
-    default: {}
-  },
+  attributes: [
+    {
+      key: { type: String, required: true },
+      value: { type: String, required: true }
+    }
+  ],
     images: {
         type: [String],
         default: []

@@ -12,10 +12,6 @@ export const createOrderOnCOD = asyncHandler(async (req: Request, res: Response)
         if (!user) {
             return res.status(401).json({ message: "Unauthorized" });
         }
-
-        console.log(user._id);
-        console.log(req.body);
-
         if (!items || items.length === 0 || !totalAmount || !shippingAddress) {
             return res.status(400).json({ message: "All fields are required" });
         }
@@ -42,8 +38,6 @@ export const createOrderOnCOD = asyncHandler(async (req: Request, res: Response)
             phone
         });
 
-        console.log(order);
-
         await order.save();
 
         res.status(201).json({ message: "Order created successfully", order });
@@ -62,9 +56,6 @@ export const createOrderOnCard = asyncHandler(async (req: Request, res: Response
         if (!user) {
             return res.status(401).json({ message: "Unauthorized" });
         }
-
-        console.log(user._id);
-        console.log(req.body);
 
         if (!items || items.length === 0 || !totalAmount || !shippingAddress) {
             return res.status(400).json({ message: "All fields are required" });
@@ -105,9 +96,6 @@ export const createOrderOnCard = asyncHandler(async (req: Request, res: Response
             paymentMethod: paymentMethod === 'card' ? 'card' : 'cod',
             phone
         });
-
-        console.log(order);
-
         await order.save();
 
         res.status(201).json({ message: "Order created successfully", order, clientSecret: paymentIntent.client_secret });
