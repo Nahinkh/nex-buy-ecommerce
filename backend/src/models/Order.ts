@@ -12,6 +12,8 @@ interface Order {
     paymentMethod: 'cod' | 'card';
     status: 'pending' | 'shipped' | 'delivered' | 'cancelled';
     phone: string;
+    paymentIntentId?: string;
+
 }
 
 const orderSchema = new mongoose.Schema<Order>({
@@ -58,6 +60,9 @@ const orderSchema = new mongoose.Schema<Order>({
         type: String,
         enum: ['pending', 'shipped', 'delivered', 'cancelled'],
         default: 'pending'
+    },
+    paymentIntentId: {
+        type: String
     }
 }, { timestamps: true });
 

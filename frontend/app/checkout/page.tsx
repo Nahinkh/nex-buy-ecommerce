@@ -1,4 +1,5 @@
 'use client'
+import { Input } from '@/components/ui/input';
 import { useProfile } from '@/hooks/uaerProfiels';
 import { useCart } from '@/hooks/useCart';
 import { useCheckout } from '@/hooks/useCheckout';
@@ -16,11 +17,36 @@ const CheckoutPage = () => {
         address: '',
         phone: ''
     })
+    const [cardForm, setCardForm] = useState({
+        cardNumber: '',
+        cardExpiry: '',
+        cardCvc: ''
+    });
     console.log(user?.user?.email);
 
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setForm({ ...form, [e.target.name]: e.target.value });
+    };
+
+    // Card input formatters
+    const handleCardInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        let formattedValue = value;
+        if (name === 'cardNumber') {
+            // Format as XXXX XXXX XXXX XXXX
+            formattedValue = value.replace(/\D/g, '').replace(/(.{4})/g, '$1 ').trim().slice(0, 19);
+        } else if (name === 'cardExpiry') {
+            // Format as MM/YY
+            formattedValue = value.replace(/\D/g, '').slice(0, 4);
+            if (formattedValue.length >= 3) {
+                formattedValue = formattedValue.replace(/^(\d{2})(\d{1,2})$/, '$1/$2');
+            }
+        } else if (name === 'cardCvc') {
+            // Format as 3 or 4 digits
+            formattedValue = value.replace(/\D/g, '').slice(0, 4);
+        }
+        setCardForm({ ...cardForm, [name]: formattedValue });
     };
 
     const handleSubmit = (e: React.FormEvent) => {
@@ -31,23 +57,22 @@ const CheckoutPage = () => {
             return;
         }
         console.log(paymentMethod)
-        const orderData = {
+        let orderData = {
             cartItems: cart,
             totalAmount: total,
             shippingAddress: form.address,
             paymentMethod: paymentMethod,
             phone: form.phone,
         }
-        console.log(orderData)
-        // checkoutMutation(orderData, {
-        //     onSuccess: (data) => {
-        //         console.log("Order successful:", data);
-        //         toast.success(data.message || "Order placed successfully!");
-        //     }
-        // });
         if (paymentMethod === 'card') {
-            router.push('/checkout/card');
-            return;
+            orderData={...orderData,paymentMethod:'card'}
+            checkoutMutation(orderData, {
+            onSuccess: (data) => {
+                console.log("Order successful:", data);
+                toast.success(data.message || "Order placed successfully!");
+            }
+        });
+
         }
         checkoutMutation(orderData, {
             onSuccess: (data) => {
@@ -143,6 +168,43 @@ const CheckoutPage = () => {
                         </label>
                     </div>
                 </div>
+                {
+                    paymentMethod === 'card' && (
+                        <div className="border p-4 rounded-lg bg-gray-50">
+                            <h2 className="text-lg font-semibold mb-3">Card Payment Selected</h2>
+                            <Input
+                                type="text"
+                                name="cardNumber"
+                                value={cardForm.cardNumber}
+                                onChange={handleCardInputChange}
+                                placeholder="4242 4242 4242 4242"
+                                required
+                                className="mb-2"
+                                maxLength={19}
+                            />
+                            <Input
+                                type="text"
+                                name="cardExpiry"
+                                value={cardForm.cardExpiry}
+                                onChange={handleCardInputChange}
+                                placeholder="MM/YY"
+                                required
+                                className="mb-2"
+                                maxLength={5}
+                            />
+                            <Input
+                                type="text"
+                                name="cardCvc"
+                                value={cardForm.cardCvc}
+                                onChange={handleCardInputChange}
+                                placeholder="CVC/CVV-1234"
+                                required
+                                className="mb-2"
+                                maxLength={4}
+                            />
+                        </div>
+                    )
+                }
 
                 {/* Order Summary */}
                 <div className="border p-4 rounded-lg">

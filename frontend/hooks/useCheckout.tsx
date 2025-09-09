@@ -5,7 +5,7 @@ import { axiosInstance } from "@/lib/axios";
 export const useCheckout = () => {
     return useMutation({
         mutationFn: async ({ cartItems, totalAmount, shippingAddress, paymentMethod, phone}: { cartItems: any[]; totalAmount: number; shippingAddress: any, paymentMethod: 'cod' | 'card' , phone: string }) => {
-            const response = await axiosInstance.post("/order/create", {
+            const response = await axiosInstance.post("/order/cod", {
                 items: cartItems,
                 totalAmount,
                 shippingAddress,

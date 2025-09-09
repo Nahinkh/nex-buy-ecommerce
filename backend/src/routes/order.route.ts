@@ -1,9 +1,9 @@
 import { Router } from "express";
-import { createOrder } from "../controller/order.controller";
+import { createOrderOnCOD } from "../controller/order.controller";
 import { isAuthenticated } from "../middleware/auth";
 
 const orderRoutes = Router();
 
-orderRoutes.post("/create",isAuthenticated,createOrder);
+orderRoutes.post("/cod", isAuthenticated, createOrderOnCOD);
 
 export default orderRoutes;
