@@ -10,8 +10,14 @@ import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useCategories } from "@/hooks/useCategory";
 import { axiosInstance } from "@/lib/axios";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
+import { toast } from "sonner";
+
+interface Attribute {
+  key: string;
+  value: string;
+}
 
 interface ProductFormData {
   name: string;
@@ -19,137 +25,131 @@ interface ProductFormData {
   category: string;
   description: string;
   inStock: boolean;
-  attributes: Record<string, string>;
+  attributes: Attribute[];
   newCategory?: string;
 }
 
 export default function UpdateProductPage() {
   const { _id } = useParams();
-  const [images, setImages] = useState<(File | null)[]>([null, null, null, null, null]);
+  const router = useRouter();
+
+  const [images, setImages] = useState<(string | File | null)[]>([null, null, null, null, null]);
   const [formData, setFormData] = useState<ProductFormData>({
     name: "",
     price: "",
     category: "",
     description: "",
     inStock: true,
-    attributes: {},
+    attributes: [],
     newCategory: "",
   });
-  // const [categories] = useState(["Electronics", "Clothing", "Books"]);
-  console.log(_id)
+
   const { data } = useQuery({
-    queryKey: ['product', _id],
+    queryKey: ["product", _id],
     queryFn: async () => {
       const { data } = await axiosInstance.get(`/product/${_id}`);
       return data;
     },
-    enabled: !!_id, // Only fetch if ID exists
+    enabled: !!_id,
   });
-  const product = data?.product;
 
+  const product = data?.product;
   const { data: categories } = useCategories();
   const categoriesList = categories?.categories || [];
 
-
-
+  // Populate form
   useEffect(() => {
     if (product) {
       setFormData({
         name: product.name,
         price: product.price.toString(),
-        category: product.category?.name,
+        category: product.category?.name || "",
         newCategory: "",
         description: product.description,
         inStock: product.inStock,
-        attributes: product.attributes || {},
+        attributes: product.attributes || [],
       });
 
       const existingImages = product.images || [];
-      setImages([
-        ...existingImages,
-        ...Array(5 - existingImages.length).fill(null)
-      ]);
+      setImages([...existingImages, ...Array(5 - existingImages.length).fill(null)]);
     }
   }, [product]);
 
+  // Handle images
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>, idx: number) => {
     const file = e.target.files?.[0] ?? null;
-    setImages((imgs) => {
-      const updated = [...imgs];
+    setImages((prev) => {
+      const updated = [...prev];
       updated[idx] = file;
       return updated;
     });
   };
 
-  const addAttribute = () => {
-    setFormData((prev) => ({
-      ...prev,
-      attributes: {
-        ...prev.attributes,
-        ["" + Date.now()]: ""
-      },
-    }));
-  };
+  // Attributes handlers
+  const addAttribute = () => setFormData(prev => ({
+    ...prev,
+    attributes: [...prev.attributes, { key: "", value: "" }]
+  }));
 
-  const updateAttrKey = (oldKey: string, newKey: string) => {
-    setFormData((prev) => {
-      const updated = { ...prev.attributes };
-      const value = updated[oldKey];
-      delete updated[oldKey];
-      if (newKey) updated[newKey] = value;
-      return { ...prev, attributes: updated };
-    });
-  };
+  const updateAttrKey = (idx: number, key: string) => setFormData(prev => {
+    const updated = [...prev.attributes];
+    updated[idx].key = key;
+    return { ...prev, attributes: updated };
+  });
 
-  const updateAttrValue = (key: string, value: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      attributes: {
-        ...prev.attributes,
-        [key]: value
-      }
-    }));
-  };
+  const updateAttrValue = (idx: number, value: string) => setFormData(prev => {
+    const updated = [...prev.attributes];
+    updated[idx].value = value;
+    return { ...prev, attributes: updated };
+  });
 
-  const removeAttribute = (key: string) => {
-    setFormData((prev) => {
-      const updated = { ...prev.attributes };
-      delete updated[key];
-      return { ...prev, attributes: updated };
-    });
-  };
-  // Handle form submit
-   const handleSubmit = async (e: React.FormEvent) => {
+  const removeAttribute = (idx: number) => setFormData(prev => {
+    const updated = [...prev.attributes];
+    updated.splice(idx, 1);
+    return { ...prev, attributes: updated };
+  });
+
+  // Form submit
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    try {
+      const cleanedAttributes = formData.attributes.filter(attr => attr.key.trim() !== "");
 
-    // Remove blank keys
-    const cleanedAttributes = Object.fromEntries(
-      Object.entries(formData.attributes).filter(([k]) => k.trim() !== "")
-    );
+      const payload = new FormData();
+      payload.append("name", formData.name);
+      payload.append("price", formData.price);
+      payload.append("category", formData.category);
+      payload.append("newCategory", formData.newCategory ?? "");
+      payload.append("description", formData.description);
+      payload.append("inStock", formData.inStock ? "true" : "false");
+      payload.append("attributes", JSON.stringify(cleanedAttributes));
 
-    const payload = new FormData();
-    payload.append("name", formData.name);
-    payload.append("price", formData.price);
-    payload.append("category", formData.category);
-    payload.append("newCategory", formData.newCategory ?? "");
-    payload.append("description", formData.description);
-    payload.append("inStock", String(formData.inStock));
-    payload.append("attributes", JSON.stringify(cleanedAttributes));
+      // Keep existing images
+      const existingImages = images.filter(img => typeof img === "string") as string[];
+      payload.append("keepExistingImages", JSON.stringify(existingImages));
 
-    images.forEach((img) => {
-      if (img instanceof File) payload.append("images", img);
-    });
-      console.log(formData)
-    // console.log(payload);
-    const res = await axiosInstance.put(`/product/update/${_id}`, formData, {
-      headers: { "Content-Type": "multipart/form-data" }
-    });
+      // Append new image files
+      images.forEach(img => {
+        if (img instanceof File) payload.append("images", img);
+      });
 
-    // console.log(res.data);
+      const res = await axiosInstance.put(`/product/update/${_id}`, payload, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+
+      if (res.status === 200) {
+        toast.success("Product updated successfully");
+        router.push("/dashboard/products");
+      }
+
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to update product");
+    }
   };
 
   return (
-       <div className="max-w-3xl mx-auto bg-white shadow p-6 rounded-2xl">
+    <div className="max-w-3xl mx-auto bg-white shadow p-6 rounded-2xl">
       <h2 className="text-2xl font-bold mb-6">Update Product</h2>
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Images */}
@@ -165,12 +165,7 @@ export default function UpdateProductPage() {
                 ) : (
                   <span className="text-sm text-gray-400">Upload</span>
                 )}
-                <input
-                  type="file"
-                  accept="image/*"
-                  className="hidden"
-                  onChange={(e) => handleImageChange(e, idx)}
-                />
+                <input type="file" accept="image/*" className="hidden" onChange={(e) => handleImageChange(e, idx)} />
               </label>
             ))}
           </div>
@@ -179,47 +174,30 @@ export default function UpdateProductPage() {
         {/* Name */}
         <div>
           <Label>Product Name</Label>
-          <Input
-            value={formData.name}
-            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-            placeholder="Enter product name"
-          />
+          <Input value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} />
         </div>
 
         {/* Price */}
         <div>
           <Label>Price ($)</Label>
-          <Input
-            type="number"
-            value={formData.price}
-            onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-          />
+          <Input type="number" value={formData.price} onChange={(e) => setFormData({ ...formData, price: e.target.value })} />
         </div>
 
         {/* Category */}
         <div>
           <Label>Category</Label>
-          <Select
-            value={formData.category}
-            onValueChange={(val) => setFormData({ ...formData, category: val })}
-          >
+          <Select value={formData.category} onValueChange={(val) => setFormData({ ...formData, category: val })}>
             <SelectTrigger><SelectValue placeholder="Select category" /></SelectTrigger>
             <SelectContent>
-                {categoriesList.map((cat: { _id: string; name: string }) => (
-                <SelectItem key={cat._id} value={cat.name}>
-                  {cat.name}
-                </SelectItem>
-                ))}
+              {categoriesList.map((cat: any) => (
+                <SelectItem key={cat._id} value={cat.name}>{cat.name}</SelectItem>
+              ))}
               <SelectItem value="new-category">+ Add Category</SelectItem>
             </SelectContent>
           </Select>
           {formData.category === "new-category" && (
             <div className="mt-2">
-              <Input
-                placeholder="New Category"
-                value={formData.newCategory}
-                onChange={(e) => setFormData({ ...formData, newCategory: e.target.value })}
-              />
+              <Input placeholder="New Category" value={formData.newCategory} onChange={(e) => setFormData({ ...formData, newCategory: e.target.value })} />
             </div>
           )}
         </div>
@@ -228,21 +206,11 @@ export default function UpdateProductPage() {
         <div>
           <Label>Attributes</Label>
           <div className="space-y-2 mt-2">
-            {Object.entries(formData.attributes).map(([key, val], idx) => (
-              <div key={`${key}-${idx}`} className="flex gap-2 items-center">
-                <Input
-                  placeholder="Key"
-                  value={key}
-                  className="w-1/3"
-                  onChange={(e) => updateAttrKey(key, e.target.value)}
-                />
-                <Input
-                  placeholder="Value"
-                  value={val}
-                  className="w-2/3"
-                  onChange={(e) => updateAttrValue(key, e.target.value)}
-                />
-                <Button type="button" variant="ghost" onClick={() => removeAttribute(key)}>
+            {formData.attributes.map((attr, idx) => (
+              <div key={idx} className="flex gap-2 items-center">
+                <Input placeholder="Key" className="w-1/3" value={attr.key} onChange={(e) => updateAttrKey(idx, e.target.value)} />
+                <Input placeholder="Value" className="w-2/3" value={attr.value} onChange={(e) => updateAttrValue(idx, e.target.value)} />
+                <Button type="button" variant="ghost" onClick={() => removeAttribute(idx)}>
                   <X className="h-4 w-4" />
                 </Button>
               </div>
@@ -256,20 +224,12 @@ export default function UpdateProductPage() {
         {/* Description */}
         <div>
           <Label>Description</Label>
-          <Textarea
-            value={formData.description}
-            onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-          />
+          <Textarea value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })} />
         </div>
 
         {/* In Stock */}
         <div className="flex items-center gap-2">
-          <Checkbox
-            checked={formData.inStock}
-            onCheckedChange={(checked) =>
-              setFormData({ ...formData, inStock: Boolean(checked) })
-            }
-          />
+          <Checkbox checked={formData.inStock} onCheckedChange={(checked) => setFormData({ ...formData, inStock: Boolean(checked) })} />
           <span>In Stock</span>
         </div>
 
@@ -279,3 +239,4 @@ export default function UpdateProductPage() {
     </div>
   );
 }
+

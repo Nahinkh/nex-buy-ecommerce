@@ -4,6 +4,8 @@ import { Card, CardContent } from './ui/card'
 import { Heart } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
+import { Button } from './ui/button'
+import { useCart } from '@/hooks/useCart'
 
 type Product = {
     _id: string;
@@ -20,48 +22,25 @@ interface ProductCardProps {
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
+    const {addToCart} =useCart()
     return (
         <Link href={`/product/${product._id}`}>
-            <Card className="w-72 h-96 rounded-2xl shadow-md hover:shadow-lg transition relative flex flex-col">
-                <CardContent className="p-4 flex flex-col flex-1">
-                    {/* Wishlist Icon */}
-                    <button className="absolute top-3 right-3 bg-white p-1 rounded-full shadow-md hover:bg-gray-100">
-                        <Heart className="w-5 h-5 text-gray-500" />
-                    </button>
-
-                    {/* Product Image */}
-                    <div className="flex items-center justify-center h-40">
-                        {product?.images?.[0] && (
-                            <Image
-                                src={product.images[0]}
-                                alt={product.name}
-                                width={150}
-                                height={150}
-                                className="object-contain max-h-full"
-                            />
-                        )}
-                    </div>
-
-                    {/* Product Title */}
-                    <h2 className="mt-3 text-sm font-medium text-gray-800 line-clamp-2">
-                        {product?.name}
-                    </h2>
-
-                    {/* Rating & Reviews */}
-                    <div className="flex items-center gap-1 mt-1">
-                        <span className="text-yellow-400">★★★★☆</span>
-                        <span className="text-xs text-gray-500">(1.2k)</span>
-                    </div>
-
-                    {/* Spacer pushes price to bottom */}
-                    <div className="flex-grow"></div>
-
-                    {/* Price */}
-                    <p className="mt-2 text-lg font-semibold text-gray-900">
-                        <span className="text-lg text-gray-500">$</span> {product?.price}
-                    </p>
-                </CardContent>
-            </Card>
+           <Card key={product._id} className="hover:shadow-lg transition h-[350px]">
+            <CardContent className="p-4 flex flex-col items-center text-center">
+              <img
+                src={product.images[0]}
+                alt={product.name}
+                className="w-full h-40 object-cover rounded-md mb-4"
+              />
+              <h3 className="font-semibold">{product.name}</h3>
+              <p className="text-green-600 font-bold">${product.price}</p>
+              <Button
+               className="mt-3 w-full bg-green-600 hover:bg-green-700"
+              >
+                Add to Cart
+              </Button>
+            </CardContent>
+          </Card>
         </Link>
 
     )

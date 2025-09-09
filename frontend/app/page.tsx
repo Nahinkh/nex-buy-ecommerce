@@ -1,7 +1,13 @@
 'use client'
+import CategorySection from "@/components/category-section";
 import ExploreCategory from "@/components/explore-category";
+import HeroBanner from "@/components/hero-banner";
 import Navbar from "@/components/navbar";
+import Newsletter from "@/components/newsletter";
 import ProductCard from "@/components/product-card";
+import ProductGrid from "@/components/product-grid";
+import PromotionalBanners from "@/components/promotional-banners";
+import Testimonials from "@/components/testimonials";
 import { Button } from "@/components/ui/button";
 import { useProducts } from "@/hooks/useProducts";
 import Image from "next/image";
@@ -16,7 +22,13 @@ export default function Home() {
 
   return (
     <>
-      <ExploreCategory />
+    <HeroBanner/>
+    <CategorySection/>
+    <ProductGrid/>
+    <PromotionalBanners/>
+    <Testimonials/>
+    <Newsletter/>
+      {/* <ExploreCategory />
       <div className="my-10 px-4 mt-32 max-w-7xl mx-auto">
         <h1 className="text-3xl font-bold">Today's Best Deals For you!</h1>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 
@@ -32,7 +44,7 @@ export default function Home() {
             </Button>
           </Link>
         </div>
-      </div>
+      </div> */}
     </>
   );
 }

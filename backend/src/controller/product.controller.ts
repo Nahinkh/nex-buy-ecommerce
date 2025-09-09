@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { asyncHandler } from "../middleware/asyncHandler";
 import Product from "../models/Product";
-import { handleCategory, handleImageUpload } from "../services/product.service";
+import { handleCategory, handleImageUpload, updateProductService } from "../services/product.service";
 import Category from "../models/Category";
 
 export const createProduct = asyncHandler(async (req: Request, res: Response) => {
@@ -56,54 +56,29 @@ export const getProducts = asyncHandler(async (req: Request, res: Response) => {
 
 
 export const updateProduct = asyncHandler(async (req: Request, res: Response) => {
-  // const { name, description, price, categoryName, attributes, newCategory } = req.body;
-  const { id } = req.params; // product ID
-  console.log(id)
-  console.log(req.body)
+  try {
+    const { id } = req.params;
 
-  // try {
-  //   // Find product
-  //   const product = await Product.findById(id);
-  //   if (!product) {
-  //     return res.status(404).json({ message: "Product not found" });
-  //   }
+    const data = {
+      ...req.body,
+      inStock: req.body.inStock === "true" || req.body.inStock === true, 
+      attributes: req.body.attributes ? JSON.parse(req.body.attributes) : undefined,
+      files: (req as Request & { files?: Express.Multer.File[] }).files,
+      keepExistingImages: req.body.keepExistingImages
+        ? JSON.parse(req.body.keepExistingImages)
+        : undefined,
+    };
 
-  //   // Handle category update
-  //   let categoryId = product.category; // default: keep old category
-  //   if (categoryName) {
-  //     const categoryDoc = await Category.findOne({ name: categoryName });
-  //     let categoryId;
-  //     if (!categoryDoc && categoryName === "new-category" && newCategory) {
-  //       const newCategoryDoc = await Category.create({ name: newCategory, slug: newCategory.toLowerCase().replace(/ /g, "-") });
-  //       categoryId = newCategoryDoc._id;
-  //     } else if (categoryDoc) {
-  //       categoryId = categoryDoc._id;
-  //     } else {
-  //       return res.status(400).json({ message: "Category not found" });
-  //     }
-  //   }
-
-  //   // Update fields
-  //   product.name = name ?? product.name;
-  //   product.description = description ?? product.description;
-  //   product.price = price ?? product.price;
-  //   product.category = categoryId;
-  //   product.attributes = attributes ?? product.attributes;
-
-  //   const updatedProduct = await product.save();
-
-  //   return res.status(200).json({
-  //     message: "Product updated successfully",
-  //     product: updatedProduct,
-  //   });
-  // } catch (error) {
-  //   console.error(error);
-  //   return res.status(500).json({ message: "Internal server error" });
-  // }
+    const product = await updateProductService(id, data);
+    res.status(200).json({ message: "Product updated successfully", product });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
 });
 
 export const getSingleProduct = asyncHandler(async (req: Request, res: Response) => {
-  const { id } = req.params;
+  const { id } = req.params
 
   try {
     const product = await Product.findById(id).populate("category");

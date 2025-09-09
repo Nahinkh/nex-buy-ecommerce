@@ -4,16 +4,16 @@ import Product from "../models/Product";
 import { Types } from "mongoose";
 
 export const handleImageUpload = async (files: Express.Multer.File[], category: string): Promise<string[]> => {
-   const imageUrls: string[] = [];
-      await Promise.all(
-        files.map(async (file) => {
-          const fileBuffer = file.buffer;
-          const folder = `products/${category}`;
-          const imageUrl = await uploadToCloudinary(fileBuffer, folder);
-          imageUrls.push(imageUrl);
-        })
-      );
-      return imageUrls;
+  const imageUrls: string[] = [];
+  await Promise.all(
+    files.map(async (file) => {
+      const fileBuffer = file.buffer;
+      const folder = `products/${category}`;
+      const imageUrl = await uploadToCloudinary(fileBuffer, folder);
+      imageUrls.push(imageUrl);
+    })
+  );
+  return imageUrls;
 };
 
 
@@ -43,7 +43,7 @@ export const updateProductService = async (
     category?: string;
     newCategory?: string;
     attributes?: { key: string; value: string }[];
-    inStock?: boolean;
+    inStock?: boolean | string;
     files?: Express.Multer.File[];
     keepExistingImages?: string[];
   }
@@ -53,29 +53,40 @@ export const updateProductService = async (
     throw new Error("Product not found");
   }
 
-  
-  if (data.category) {
-    product.category = await handleCategory(data.category, data.newCategory) as any;
+  // ✅ Category update
+  if (data.category || data.newCategory) {
+    product.category = (await handleCategory(
+      data.category || "",
+      data.newCategory
+    )) as any;
   }
 
-  
+  // ✅ Upload new images
   let uploadedUrls: string[] = [];
   if (data.files && data.files.length > 0) {
-    uploadedUrls = await handleImageUpload(data.files, String(product.category));
+    uploadedUrls = await handleImageUpload(
+      data.files,
+      String(product.category)
+    );
   }
 
-  
+  // ✅ Merge or replace images
   if (data.keepExistingImages) {
     product.images = [...data.keepExistingImages, ...uploadedUrls];
   } else if (uploadedUrls.length > 0) {
-    product.images = uploadedUrls; 
+    product.images = uploadedUrls; // replace entirely
   }
 
+  // ✅ Update fields if provided
   if (data.name) product.name = data.name;
   if (data.description) product.description = data.description;
-  if (data.price) product.price = data.price;
-  if (data.attributes) product.attributes = data.attributes;
-  if (typeof data.inStock === "boolean") product.inStock = data.inStock;
+  if (typeof data.price === "number") product.price = data.price;
+  if (Array.isArray(data.attributes)) product.attributes = data.attributes;
+  if (typeof data.inStock === "boolean") {
+    product.inStock = data.inStock;
+  } else if (typeof data.inStock === "string") {
+    product.inStock = data.inStock === "true";
+  }
 
   await product.save();
   return product;
