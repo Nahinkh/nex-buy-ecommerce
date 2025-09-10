@@ -6,6 +6,7 @@ import ProductCard from "@/components/product-card";
 import { useProducts } from "@/hooks/useProducts";
 import { Button } from "@/components/ui/button";
 import {useSearchParams } from "next/navigation";
+import PageHead from "@/components/page-head";
 
 export default function ProductsPage() {
  const [sortBy, setSortBy] = useState("newest");
@@ -49,6 +50,8 @@ export default function ProductsPage() {
   );
   return (
      <div className="max-w-7xl mx-auto px-6 mt-10">
+      <PageHead title="Products"/>
+
       {
         filteredProducts.length === 0 ? (
           <h2 className="text-2xl font-bold tracking-tight">No products found</h2>

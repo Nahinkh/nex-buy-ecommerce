@@ -22,7 +22,6 @@ const Navbar = () => {
 
   const handleSearch = () => {
     if (search.trim()) {
-      // Push search query to Products page
       router.push(`/products?search=${search}`);
     } else {
       router.push("/products");
@@ -69,7 +68,6 @@ const Navbar = () => {
           <div className="hidden md:flex items-center gap-4">
             <Link href="/" className="text-gray-700 hover:text-green-600">Home</Link>
             <Link href="/products" className="text-gray-700 hover:text-green-600">Products</Link>
-            <Link href="/categories" className="text-gray-700 hover:text-green-600">Categories</Link>
 
             {/* Cart */}
             <Link href="/cart" className="relative">
@@ -135,8 +133,6 @@ const Navbar = () => {
             />
             <Link href="/" className="text-gray-700 hover:text-green-600">Home</Link>
             <Link href="/products" className="text-gray-700 hover:text-green-600">Products</Link>
-            <Link href="/categories" className="text-gray-700 hover:text-green-600">Categories</Link>
-
             <Link href="/cart" className="relative text-gray-700 hover:text-green-600">
               Cart
               {cart.length > 0 && (

@@ -1,15 +1,21 @@
 'use client'
+import PageHead from '@/components/page-head';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useLogin } from '@/hooks/useLogin';
+import { Eye, EyeOff } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import React, { useState } from 'react'
-import { toast } from 'sonner';
+import React, { useEffect, useState } from 'react'
 
 const LoginPage = () => {
   const [form, setForm] = useState({ email: "", password: "" });
   const { mutate: login, isSuccess, data } = useLogin();
-  const router = useRouter();
+   const [showPassword, setShowPassword] = useState(false);
+   const router = useRouter();
+     useEffect(() => {
+    const token = sessionStorage.getItem("token");
+    if (token) router.push("/");
+  }, [router]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -17,22 +23,12 @@ const LoginPage = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    login(form,{
-      onSuccess:(data)=>{
-        sessionStorage.setItem("token", data.token);
-        const redirectPath = sessionStorage.getItem("redirectAfterLogin") || '/';
-        sessionStorage.removeItem("redirectAfterLogin");
-        router.push(redirectPath);
-        toast.success("Login successful!");
-      },
-      onError:(error:any)=>{
-        toast.error(error?.response?.data?.message || "Login failed. Please try again.");
-      }
-    });
+    login(form);
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <PageHead title="Login" />
       <div className="w-full max-w-md p-8 bg-white shadow-lg rounded-lg">
         <h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -46,15 +42,23 @@ const LoginPage = () => {
               onChange={handleChange}
             />
           </div>
-          <div>
+          <div className="relative">
             <label className="block mb-1 font-medium">Password</label>
             <Input
               name="password"
-              type="password"
+              type={showPassword ? "text" : "password"}
               placeholder="******"
               value={form.password}
               onChange={handleChange}
+              className="pr-10" // add padding to avoid overlap with icon
             />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-2 top-9 text-gray-500 hover:text-gray-700"
+            >
+              {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+            </button>
           </div>
           <Button type="submit">Login</Button>
         </form>

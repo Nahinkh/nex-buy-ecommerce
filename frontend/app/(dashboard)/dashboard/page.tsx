@@ -3,6 +3,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 import { Package, ShoppingCart, DollarSign, Users } from "lucide-react";
+import PageHead from "@/components/page-head";
 
 const stats = [
   { title: "Total Products", value: "120", icon: Package },
@@ -24,6 +25,7 @@ const salesData = [
 export default function OverviewPage() {
   return (
     <div className="space-y-6">
+      <PageHead title="Dashboard Overview" />
       {/* Header */}
       <div>
         <h2 className="text-2xl font-bold tracking-tight">Dashboard Overview</h2>

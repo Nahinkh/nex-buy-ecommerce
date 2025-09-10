@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import Link from 'next/link';
 import { useCart } from '@/hooks/useCart';
+import PageHead from '@/components/page-head';
 
 
 const ProductDetailsPage = () => {
@@ -34,6 +35,7 @@ const ProductDetailsPage = () => {
     if (!productData) return null;
     return productData && (
         <div className="max-w-6xl w-full px-6 mx-auto mt-10 space-y-6">
+            <PageHead title={productData.name} description={productData.description} />
             {/* Breadcrumb */}
             <p className="text-sm text-gray-500">
                 <Link href="/"><span className='text-green-500'>Home</span></Link> / <span>Products</span> /{" "}

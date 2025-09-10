@@ -2,7 +2,7 @@
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { useRegister } from '@/hooks/useRegister'
-import { usePathname, useRouter } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
 
 const RegisterPage = () => {
@@ -15,14 +15,19 @@ const RegisterPage = () => {
 
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        
-        register(form);
-        console.log("Register data:", data);
-        console.log("isSuccess:", isSuccess);
-        if(isSuccess) router.push('/login')
-    };
+   const handleSubmit = (e: React.FormEvent) => {
+  e.preventDefault();
+
+  register(form, {
+    onSuccess: (data) => {
+      console.log("Register data:", data);
+      router.push("/login"); // Redirect after success
+    },
+    onError: (error: any) => {
+      console.error("Registration error:", error);
+    },
+  });
+};
     return (
         <div><div className="min-h-screen flex items-center justify-center bg-gray-50">
             <div className="w-full max-w-md p-8 bg-white shadow-lg rounded-lg">
