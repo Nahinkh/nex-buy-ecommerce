@@ -2,7 +2,6 @@
 
 import { useMutation } from "@tanstack/react-query";
 import { useAuthStore } from "@/stores/authStore";
-import { toast } from "sonner";
 import { axiosInstance } from "@/lib/axios";
 
 interface LoginData {
@@ -29,9 +28,8 @@ export const useLogin = () => {
     onSuccess: (data) => {
       setUser({
         ...data.user,
-        password: "", // Provide password if available, otherwise use empty string
+        password: "",
       });
-      toast.success("Login successful!");
     },
   });
 

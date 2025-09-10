@@ -4,6 +4,7 @@ import { Input } from '@/components/ui/input';
 import { useLogin } from '@/hooks/useLogin';
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react'
+import { toast } from 'sonner';
 
 const LoginPage = () => {
   const [form, setForm] = useState({ email: "", password: "" });
@@ -16,9 +17,18 @@ const LoginPage = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    login(form);
-    console.log("Login data:", data);
-    if (isSuccess) router.push('/');
+    login(form,{
+      onSuccess:(data)=>{
+        sessionStorage.setItem("token", data.token);
+        const redirectPath = sessionStorage.getItem("redirectAfterLogin") || '/';
+        sessionStorage.removeItem("redirectAfterLogin");
+        router.push(redirectPath);
+        toast.success("Login successful!");
+      },
+      onError:(error:any)=>{
+        toast.error(error?.response?.data?.message || "Login failed. Please try again.");
+      }
+    });
   };
 
   return (

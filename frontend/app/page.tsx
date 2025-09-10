@@ -1,26 +1,17 @@
 'use client'
 import CategorySection from "@/components/category-section";
-import ExploreCategory from "@/components/explore-category";
 import HeroBanner from "@/components/hero-banner";
-import Navbar from "@/components/navbar";
 import Newsletter from "@/components/newsletter";
-import ProductCard from "@/components/product-card";
 import ProductGrid from "@/components/product-grid";
 import PromotionalBanners from "@/components/promotional-banners";
 import Testimonials from "@/components/testimonials";
-import { Button } from "@/components/ui/button";
+import { useProfile } from "@/hooks/uaerProfiels";
 import { useProducts } from "@/hooks/useProducts";
-import Image from "next/image";
-import Link from "next/link";
 
-export default function Home() {
-  const { data, isLoading, isError } = useProducts();
-  console.log(data?.products);
 
-  if (isLoading) return <div>Loading...</div>;
-  if (isError) return <div>Error loading products</div>;
-
+export default function Home() { 
   return (
+  
     <>
     <HeroBanner/>
     <CategorySection/>

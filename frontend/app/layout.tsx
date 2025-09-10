@@ -40,9 +40,9 @@ export default function RootLayout({
           <NavbarWrapper />
           {children}
           <Toaster position="top-center" richColors />
-        </Providers> 
-        </main>
+        </Providers>
         <Footer />
+        </main>
 
       </body>
     </html>

@@ -5,7 +5,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import ProductCard from "@/components/product-card";
 import { useProducts } from "@/hooks/useProducts";
 import { Button } from "@/components/ui/button";
-import { useParams, useSearchParams } from "next/navigation";
+import {useSearchParams } from "next/navigation";
 
 export default function ProductsPage() {
  const [sortBy, setSortBy] = useState("newest");

@@ -12,6 +12,7 @@ import {
   X,
 } from "lucide-react";
 import { useState } from "react";
+import PrivateRoute from "@/hooks/private-route";
 
 const navItems = [
   { name: "Overview", href: "/dashboard", icon: LayoutDashboard },
@@ -20,12 +21,13 @@ const navItems = [
   { name: "Orders", href: "/dashboard/orders", icon: ShoppingCart },
 ];
 
-export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
-    <div className="flex h-screen bg-gray-50 overflow-hidden">
+    <PrivateRoute>
+      <div className="flex h-screen bg-gray-50 overflow-hidden">
       {/* Sidebar (Desktop) */}
       <aside className="hidden md:flex w-64 bg-white shadow-md border-r fixed top-0 left-0 h-full">
         <SidebarContent pathname={pathname} />
@@ -75,10 +77,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         <main className="flex-1 p-6 overflow-y-auto">{children}</main>
       </div>
     </div>
+    </PrivateRoute>
   );
 }
+export default DashboardLayout;
 
-function SidebarContent({ pathname }: { pathname: string }) {
+const SidebarContent = ({ pathname }: { pathname: string }) => {
   return (
     <div className="flex flex-col w-full">
       <div className="px-6 py-6">
