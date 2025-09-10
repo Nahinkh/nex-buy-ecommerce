@@ -29,15 +29,11 @@ export const useLogin = () => {
       return res.data;
     },
    onSuccess: (data) => {
-        // Save token
         setUser({
           ...data.user,
           password: data.user.password ?? "",
         });
         sessionStorage.setItem("token", data.token);
-        console.log("Login data:", data);
-
-        // Redirect if previously saved path exists
         const redirectPath = sessionStorage.getItem("redirectAfterLogin") || "/";
         sessionStorage.removeItem("redirectAfterLogin");
 

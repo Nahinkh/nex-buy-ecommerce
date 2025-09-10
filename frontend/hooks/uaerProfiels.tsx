@@ -6,9 +6,11 @@ import { useQuery, UseQueryOptions } from "@tanstack/react-query";
 
 
 interface ProfileResponse {
-   _id: string;
+user:{
+     _id: string;
     name: string;
     email: string;
+}
 }
 
 export const useProfile = (

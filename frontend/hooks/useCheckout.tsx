@@ -12,7 +12,6 @@ export const useCheckout = () => {
                 paymentMethod,
                 phone
             });
-            console.log(response.data);
             return response.data;
         }
     })

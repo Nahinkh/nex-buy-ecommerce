@@ -7,6 +7,7 @@ import categoryRoutes from "./routes/category.route";
 import orderRoute from "./routes/order.route";
 import orderRoutes from "./routes/order.route";
 import paymentRouter from "./routes/payment.route";
+import { connectDB } from "./config/db.config";
 const app = express();
 app.use(cors(
   {
@@ -16,7 +17,7 @@ app.use(cors(
 ));
 app.use(express.json());
 app.use(cookieParser())
-
+connectDB()
 
 app.use('/api/v1/auth',userRoutes)
 app.use('/api/v1/product',productRoutes)

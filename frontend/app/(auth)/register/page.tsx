@@ -20,7 +20,6 @@ const RegisterPage = () => {
 
   register(form, {
     onSuccess: (data) => {
-      console.log("Register data:", data);
       router.push("/login"); // Redirect after success
     },
     onError: (error: any) => {

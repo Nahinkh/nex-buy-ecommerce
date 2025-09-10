@@ -18,8 +18,6 @@ export const useFormData = () => {
                 formData.append(key, String(value));
             }
         })
-            console.log("from from data",data, files)
-            console.log("Form Data:", formData);
         return formData;
     }
     return { buildFromData };

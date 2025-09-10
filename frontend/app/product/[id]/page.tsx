@@ -16,7 +16,6 @@ const ProductDetailsPage = () => {
     const id = params?.id as string;
     const [quantity, setQuantity] = useState(1);
     const {addToCart,cart,increaseQuantity,decreaseQuantity} = useCart()
-    console.log(cart)
     const inStock = true; // Replace with actual stock status from product data
 
     const { data: product, isLoading, error } = useSingleProduct(id);

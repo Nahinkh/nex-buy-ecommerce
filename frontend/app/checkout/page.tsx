@@ -23,7 +23,6 @@ const CheckoutPage = () => {
         cardExpiry: '',
         cardCvc: ''
     });
-    console.log(user?.user?.email);
 
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -57,7 +56,6 @@ const CheckoutPage = () => {
             alert("Your cart is empty!");
             return;
         }
-        console.log(paymentMethod)
         let orderData = {
             cartItems: cart,
             totalAmount: total,
@@ -69,7 +67,6 @@ const CheckoutPage = () => {
             orderData={...orderData,paymentMethod:'card'}
             checkoutMutation(orderData, {
             onSuccess: (data) => {
-                console.log("Order successful:", data);
                 toast.success(data.message || "Order placed successfully!");
             }
         });
@@ -77,7 +74,6 @@ const CheckoutPage = () => {
         }
         checkoutMutation(orderData, {
             onSuccess: (data) => {
-                console.log("Order successful:", data);
                 toast.success(data.message || "Order placed successfully!");
             }
         });
