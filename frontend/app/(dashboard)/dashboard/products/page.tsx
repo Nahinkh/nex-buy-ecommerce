@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { toast } from "sonner";
 import Link from "next/link";
+import PageHead from "@/components/page-head";
 
 interface Product {
   _id: string;
@@ -53,6 +54,7 @@ export default function ProductList() {
 
   return (
     <div className="max-w-5xl mx-auto p-6 bg-white rounded-2xl shadow">
+      <PageHead title="Product List" />
       <h2 className="text-2xl font-bold mb-4">Products</h2>
       <Table>
         <TableHeader>

@@ -4,11 +4,13 @@ import Image from 'next/image';
 import React from 'react'
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
+import PageHead from '@/components/page-head';
 
 const CartPage = () => {
     const { cart, clearCart, removeFromCart, increaseQuantity, decreaseQuantity,total } = useCart();
   return (
     <div className="p-6 max-w-3xl mx-auto">
+      <PageHead title="Your Cart" />
       <h1 className="text-2xl font-bold mb-6">🛒 Your Cart</h1>
 
       {cart.length === 0 ? (

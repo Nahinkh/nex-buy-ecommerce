@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { axiosInstance } from "@/lib/axios";
+import PageHead from "@/components/page-head";
 
 interface Attribute {
   key: string;
@@ -99,6 +100,7 @@ export default function AddProductPage() {
 
   return (
     <div className="max-w-3xl mx-auto bg-white shadow p-6 rounded-2xl">
+      <PageHead title="Add New Product" />
       <h2 className="text-2xl font-bold mb-6">Add New Product</h2>
 
       <form onSubmit={handleSubmit} className="space-y-6">
