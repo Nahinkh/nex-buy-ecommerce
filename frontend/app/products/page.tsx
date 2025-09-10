@@ -11,20 +11,26 @@ export default function ProductsPage() {
  const [sortBy, setSortBy] = useState("newest");
   const [currentPage, setCurrentPage] = useState(1);
   const searchParams = useSearchParams();
-  const category = searchParams.get('category'); // get category from URL
+  const category = searchParams.get('category'); 
+  const searchQuery = searchParams.get('search')?.toLocaleLowerCase() || "";
 
   const { data, isLoading, isError } = useProducts(); // fetch all products
   if (isLoading) return <div>Loading...</div>;
   if (isError) return <div>Error loading products</div>;
 
-  const allProducts = data?.products || [];
-  console.log(allProducts);
+  let filteredProducts = data?.products || [];
+  console.log(filteredProducts);
   // Filter by category if present
-  const filteredProducts = category
-    ? allProducts.filter((p:any) => p.category?.slug === category)
-    : allProducts;
-    console.log(filteredProducts
-    )
+  if (category) {
+    filteredProducts = filteredProducts.filter((p:any) => p.category?.slug === category);
+  }
+  // Filter by search query if present
+  if (searchQuery) {
+  filteredProducts = filteredProducts.filter((p: any) =>
+    p.name.toLowerCase().includes(searchQuery)
+  );
+}
+
 
   // Sorting logic
   const sortedProducts = [...filteredProducts].sort((a, b) => {
@@ -43,10 +49,18 @@ export default function ProductsPage() {
   );
   return (
      <div className="max-w-7xl mx-auto px-6 mt-10">
-      {/* Header + Sort */}
+      {
+        filteredProducts.length === 0 ? (
+          <h2 className="text-2xl font-bold tracking-tight">No products found</h2>
+        ) : (
+          <>
+          {/* Header + Sort */}
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-semibold">
           {category ? category.toLocaleUpperCase() : "All Products"}
+          {
+            
+          }
         </h1>
         <Select value={sortBy} onValueChange={(value) => setSortBy(value)}>
           <SelectTrigger className="w-[200px]">
@@ -93,6 +107,9 @@ export default function ProductsPage() {
           Next
         </Button>
       </div>
+          </>
+        )
+      }
     </div>
   );
 }

@@ -20,11 +20,20 @@ const Navbar = () => {
   const [search, setSearch] = useState("");
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  const handleSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
-      router.push(`/products?query=${encodeURIComponent(search)}`);
+  const handleSearch = () => {
+    if (search.trim()) {
+      // Push search query to Products page
+      router.push(`/products?search=${search}`);
+    } else {
+      router.push("/products");
     }
-  }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      handleSearch();
+    }
+  };
 
   const handleLogout = async () => {
     await axiosInstance.post("/auth/logout");
@@ -51,7 +60,7 @@ const Navbar = () => {
               placeholder="Search products..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              onKeyDown={handleSearch}
+              onKeyDown={handleKeyDown}
               className="w-full max-w-md"
             />
           </div>
