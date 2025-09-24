@@ -88,7 +88,7 @@ const Navbar = () => {
               <DropdownMenu>
                 <DropdownMenuTrigger>
                   <Avatar className="cursor-pointer">
-                    <AvatarImage src={session?.user?.image || user?.user.profilePicture || "/avatar.png"} />
+                    <AvatarImage src={session?.user?.image || "/avatar.png"} />
                     <AvatarFallback>
                       {session?.user?.name}
                     </AvatarFallback>
