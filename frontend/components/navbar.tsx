@@ -11,7 +11,7 @@ import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar'
 import { useCart } from '@/hooks/useCart'
 import { useRouter } from 'next/navigation'
 import { useAuthStore } from '@/stores/authStore'
-import { useSession } from 'next-auth/react'
+import { signOut, useSession } from 'next-auth/react'
 
 const Navbar = () => {
   const { data: user } = useProfile();
@@ -83,13 +83,13 @@ const Navbar = () => {
             </Link>
 
             {/* User Avatar */}
-            {user || session ? (
+            {session ? (
               <DropdownMenu>
                 <DropdownMenuTrigger>
                   <Avatar className="cursor-pointer">
                     <AvatarImage src={session?.user?.image || "/avatar.png"} />
                     <AvatarFallback>
-                      {session?.user?.name ? session.user.name.charAt(0).toUpperCase() : 'U'}
+                      {session?.user?.name}
                     </AvatarFallback>
                   </Avatar>
                 </DropdownMenuTrigger>
@@ -100,7 +100,7 @@ const Navbar = () => {
                   <DropdownMenuItem>
                     <Link href="/orders">Orders</Link>
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={handleLogout}>
+                  <DropdownMenuItem onClick={()=>signOut()}>
                     Logout
                   </DropdownMenuItem>
                 </DropdownMenuContent>

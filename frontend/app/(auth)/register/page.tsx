@@ -4,10 +4,12 @@ import { Input } from '@/components/ui/input'
 import { useRegister } from '@/hooks/useRegister'
 import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
+import { toast } from 'sonner'
 
 const RegisterPage = () => {
     const [form, setForm] = useState({ name: "", email: "", password: "" });
-    const { mutate: register,isSuccess,data } = useRegister();
+    const { mutate: register, isSuccess, data } = useRegister();
+    const [isLoading, setIsLoading] = useState(false);
     const router = useRouter()
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -15,18 +17,20 @@ const RegisterPage = () => {
 
     };
 
-   const handleSubmit = (e: React.FormEvent) => {
-  e.preventDefault();
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setIsLoading(true);
 
-  register(form, {
-    onSuccess: (data) => {
-      router.push("/login"); // Redirect after success
-    },
-    onError: (error: any) => {
-      console.error("Registration error:", error);
-    },
-  });
-};
+        try {
+
+
+            register(form);
+        } catch (error) {
+            toast.error("Registration failed. Please try again.");
+        } finally {
+            setIsLoading(false);
+        }
+    };
     return (
         <div><div className="min-h-screen flex items-center justify-center bg-gray-50">
             <div className="w-full max-w-md p-8 bg-white shadow-lg rounded-lg">
@@ -62,7 +66,7 @@ const RegisterPage = () => {
                             onChange={handleChange}
                         />
                     </div>
-                    <Button type="submit">Register</Button>
+                    <Button disabled={isLoading} type="submit">{isLoading ? "Registering..." : "Register"}</Button>
                 </form>
                 <p className="text-sm text-center mt-4">
                     Already have an account? <a href="/login" className="text-blue-500">Login</a>
