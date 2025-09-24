@@ -13,6 +13,7 @@ const LoginPage = () => {
   const [form, setForm] = useState({ email: "", password: "" });
   const { mutate: login, isSuccess, data } = useLogin();
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   useEffect(() => {
     const token = sessionStorage.getItem("token");
@@ -25,6 +26,10 @@ const LoginPage = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 3000);
+    setIsLoading(true);
     login(form);
   };
 
@@ -65,7 +70,7 @@ const LoginPage = () => {
               {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
             </button>
           </div>
-          <Button type="submit">Login</Button>
+          <Button disabled={isLoading} type="submit">{isLoading ? "Loading..." : "Login"}</Button>
         </form>
         <p className="text-sm text-center mt-4">
           Don't have an account? <a href="/register" className="text-blue-500">Register</a>

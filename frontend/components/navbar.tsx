@@ -17,6 +17,7 @@ const Navbar = () => {
   const { data: user } = useProfile();
   const {data: session}= useSession()
   console.log(session)
+  console.log(user)
   const router = useRouter();
   const { cart } = useCart();
   const logoutStore = useAuthStore((state) => state.logout);
@@ -83,11 +84,11 @@ const Navbar = () => {
             </Link>
 
             {/* User Avatar */}
-            {session ? (
+            {session || user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger>
                   <Avatar className="cursor-pointer">
-                    <AvatarImage src={session?.user?.image || "/avatar.png"} />
+                    <AvatarImage src={session?.user?.image || user?.user.profilePicture || "/avatar.png"} />
                     <AvatarFallback>
                       {session?.user?.name}
                     </AvatarFallback>
@@ -100,7 +101,10 @@ const Navbar = () => {
                   <DropdownMenuItem>
                     <Link href="/orders">Orders</Link>
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={()=>signOut()}>
+                  <DropdownMenuItem onClick={()=>{
+                    signOut();
+                    handleLogout()
+                  }}>
                     Logout
                   </DropdownMenuItem>
                 </DropdownMenuContent>

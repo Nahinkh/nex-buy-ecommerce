@@ -1,4 +1,5 @@
 'use client'
+import PageHead from '@/components/page-head'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { useRegister } from '@/hooks/useRegister'
@@ -32,7 +33,9 @@ const RegisterPage = () => {
         }
     };
     return (
-        <div><div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div>
+            <PageHead title="Register" />
+            <div className="min-h-screen flex items-center justify-center bg-gray-50">
             <div className="w-full max-w-md p-8 bg-white shadow-lg rounded-lg">
                 <h2 className="text-2xl font-bold mb-6 text-center">Register</h2>
                 <form onSubmit={handleSubmit} className="space-y-4">

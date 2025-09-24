@@ -28,21 +28,26 @@ export const useLogin = () => {
       const res = await axiosInstance.post("/auth/login", data);
       return res.data;
     },
-   onSuccess: (data) => {
-        setUser({
-          ...data.user,
-          password: data.user.password ?? "",
-        });
-        sessionStorage.setItem("token", data.token);
-        const redirectPath = sessionStorage.getItem("redirectAfterLogin") || "/";
-        sessionStorage.removeItem("redirectAfterLogin");
+    onSuccess: (data) => {
+      setUser({
+        ...data.user,
+        password: data.user.password ?? "",
+      });
+      // sessionStorage.setItem("token", data.token);
+      // const redirectPath = sessionStorage.getItem("redirectAfterLogin") || "/";
+      // sessionStorage.removeItem("redirectAfterLogin");
 
-        toast.success("Login successful!");
-        router.push(redirectPath);
-      },
-      onError: (error: any) => {
+      toast.success("Login successful!");
+      router.push("/");
+      return;
+    },
+    onError: (error: any) => {
+      if (error.response?.status === 401) {
+        router.push("/login");
         toast.error(error?.response?.data?.message || "Login failed. Please try again.");
-      },
+      }
+
+    },
   });
 
   return mutation;

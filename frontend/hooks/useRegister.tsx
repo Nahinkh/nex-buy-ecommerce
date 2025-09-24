@@ -38,12 +38,11 @@ export const useRegister = () => {
       router.push("/login");
       setUser({
         ...data.user,
-        password: "", // Provide password if available, otherwise use empty string
+        password: "",
       });
       return;
     },
     onError(error, variables, context) {
-      // Cast error to AxiosError to access response property
       const err = error as any;
       if (err.response?.status === 400) {
         toast.error("User already exists. Please login.");
