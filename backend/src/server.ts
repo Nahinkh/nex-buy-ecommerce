@@ -4,10 +4,13 @@ import userRoutes from "./routes/user.routes";
 import cookieParser from 'cookie-parser'
 import productRoutes from "./routes/product.routes";
 import categoryRoutes from "./routes/category.route";
-import orderRoute from "./routes/order.route";
+import Google from "@auth/express/providers/google"
 import orderRoutes from "./routes/order.route";
 import paymentRouter from "./routes/payment.route";
 import { connectDB } from "./config/db.config";
+import { ExpressAuth } from "@auth/express";
+import { envConfig } from "./config/env.config";
+import User from "./models/User";
 const app = express();
 app.use(cors(
   {
@@ -18,6 +21,43 @@ app.use(cors(
 app.use(express.json());
 app.use(cookieParser())
 connectDB()
+
+// Auth.js 
+// app.set("trust proxy", true)
+// app.use('/api/auth/*', ExpressAuth({
+//   secret:envConfig.auth_secret,
+//   providers:[Google],
+//   callbacks:{
+//     async signIn({ profile }) {
+//         if (
+//           profile &&
+//           profile.email_verified &&
+//           typeof profile.email === "string" &&
+//           profile.email.endsWith("@gmail.com")
+//         ) {
+//           let dbUser = await User.findOne({ email: profile.email });
+//           if (!dbUser) {
+//             dbUser = await User.create({
+//               name: profile.name,
+//               email: profile.email,
+//               password: "google_oauth",
+//               role: "user",
+//             });
+//           }
+//           return true;
+//         }
+//         return false;
+//       },
+//       async session({ session }) {
+//         const dbUser = await User.findOne({ email: session.user?.email }) as typeof User.prototype;
+//         if (dbUser && session.user) {
+//           session.user.id = (dbUser._id as unknown as { toString: () => string }).toString();
+//         }
+//         return session;
+//       }
+//     }
+//   }
+// ))
 
 app.use('/api/v1/auth',userRoutes)
 app.use('/api/v1/product',productRoutes)

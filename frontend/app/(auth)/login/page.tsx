@@ -4,15 +4,17 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useLogin } from '@/hooks/useLogin';
 import { Eye, EyeOff } from 'lucide-react';
+import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react'
+import { FcGoogle } from 'react-icons/fc';
 
 const LoginPage = () => {
   const [form, setForm] = useState({ email: "", password: "" });
   const { mutate: login, isSuccess, data } = useLogin();
-   const [showPassword, setShowPassword] = useState(false);
-   const router = useRouter();
-     useEffect(() => {
+  const [showPassword, setShowPassword] = useState(false);
+  const router = useRouter();
+  useEffect(() => {
     const token = sessionStorage.getItem("token");
     if (token) router.push("/");
   }, [router]);
@@ -31,6 +33,9 @@ const LoginPage = () => {
       <PageHead title="Login" />
       <div className="w-full max-w-md p-8 bg-white shadow-lg rounded-lg">
         <h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
+        <Button variant="outline" className="w-full flex items-center gap-2" onClick={async () => await signIn("google", { callbackUrl: "/" })}>
+          <FcGoogle size={20} /> Login with Google
+        </Button>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block mb-1 font-medium">Email</label>

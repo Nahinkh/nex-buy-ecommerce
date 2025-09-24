@@ -11,9 +11,12 @@ import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar'
 import { useCart } from '@/hooks/useCart'
 import { useRouter } from 'next/navigation'
 import { useAuthStore } from '@/stores/authStore'
+import { useSession } from 'next-auth/react'
 
 const Navbar = () => {
   const { data: user } = useProfile();
+  const {data: session}= useSession()
+  console.log(session)
   const router = useRouter();
   const { cart } = useCart();
   const logoutStore = useAuthStore((state) => state.logout);
@@ -80,12 +83,14 @@ const Navbar = () => {
             </Link>
 
             {/* User Avatar */}
-            {user ? (
+            {user || session ? (
               <DropdownMenu>
                 <DropdownMenuTrigger>
                   <Avatar className="cursor-pointer">
-                    <AvatarImage src="/avatar.png" />
-                    <AvatarFallback>U</AvatarFallback>
+                    <AvatarImage src={session?.user?.image || "/avatar.png"} />
+                    <AvatarFallback>
+                      {session?.user?.name ? session.user.name.charAt(0).toUpperCase() : 'U'}
+                    </AvatarFallback>
                   </Avatar>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
