@@ -13,7 +13,5 @@ export const envConfig = {
     publishableKey: process.env.STRIPE_PUBLISHABLE_KEY as string,
     webhookSecret: process.env.STRIPE_WEBHOOK_SECRET as string,
   },
-  auth_secret: process.env.AUTH_SECRET as string,
-  auth_google_id: process.env.AUTH_GOOGLE_ID as string,
-  auth_google_secret: process.env.AUTH_GOOGLE_SECRET as string,
+  corsOrigin: process.env.CORS_ORIGIN as string,
 };

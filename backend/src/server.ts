@@ -12,12 +12,26 @@ import { ExpressAuth } from "@auth/express";
 import { envConfig } from "./config/env.config";
 import User from "./models/User";
 const app = express();
-app.use(cors(
-  {
-    origin: "http://localhost:3000",
+
+const allowedOrigins = [
+  "http://localhost:3000", // local dev
+  "https://nex-buy-ecommerce-qe85.vercel.app", // production
+];
+
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      if (!origin) return callback(null, true); // allow server-to-server or curl
+
+      if (allowedOrigins.includes(origin)) {
+        callback(null, true); // allow request
+      } else {
+        callback(new Error(`Origin ${origin} not allowed by CORS`));
+      }
+    },
     credentials: true,
-  }
-));
+  })
+);
 app.use(express.json());
 app.use(cookieParser())
 connectDB()
