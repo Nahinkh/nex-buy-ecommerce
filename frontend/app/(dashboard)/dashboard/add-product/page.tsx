@@ -10,6 +10,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { axiosInstance } from "@/lib/axios";
 import PageHead from "@/components/page-head";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 interface Attribute {
   key: string;
@@ -22,12 +24,14 @@ interface ProductFormData {
   category: string;
   description: string;
   inStock: boolean;
-  attributes: Attribute[];   // ✅ array now
+  attributes: Attribute[]; 
   newCategory?: string;
 }
 
 export default function AddProductPage() {
   const [images, setImages] = useState<(File | null)[]>([null, null, null, null, null]);
+  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter()
   const [formData, setFormData] = useState<ProductFormData>({
     name: "",
     price: "",
@@ -77,8 +81,10 @@ export default function AddProductPage() {
   // Handle form submit
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsLoading(true);
 
-    const data = new FormData();
+   try {
+     const data = new FormData();
     data.append("name", formData.name);
     data.append("price", formData.price);
     data.append("category", formData.category);
@@ -94,6 +100,16 @@ export default function AddProductPage() {
     const res = await axiosInstance.post("/product/create", data, {
       headers: { "Content-Type": "multipart/form-data" }
     });
+    if (res.status === 201) {
+      toast.success("Product added successfully!");
+      router.push("/dashboard/products")
+    }
+    
+   } catch (error) {
+     toast.error("Failed to add product");
+   } finally {
+     setIsLoading(false);
+   }
   };
 
   return (

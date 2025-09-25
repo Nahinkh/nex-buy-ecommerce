@@ -16,8 +16,6 @@ import { signOut, useSession } from 'next-auth/react'
 const Navbar = () => {
   const { data: user } = useProfile();
   const {data: session}= useSession()
-  console.log(session)
-  console.log(user?.user?.profilePicture)
   const router = useRouter();
   const { cart } = useCart();
   const logoutStore = useAuthStore((state) => state.logout);

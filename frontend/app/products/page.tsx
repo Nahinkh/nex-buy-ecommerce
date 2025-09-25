@@ -20,7 +20,6 @@ export default function ProductsPage() {
   if (isError) return <div>Error loading products</div>;
 
   let filteredProducts = data?.products || [];
-  console.log(filteredProducts);
   // Filter by category if present
   if (category) {
     filteredProducts = filteredProducts.filter((p:any) => p.category?.slug === category);

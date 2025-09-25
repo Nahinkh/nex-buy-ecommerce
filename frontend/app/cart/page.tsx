@@ -8,6 +8,7 @@ import PageHead from '@/components/page-head';
 
 const CartPage = () => {
     const { cart, clearCart, removeFromCart, increaseQuantity, decreaseQuantity,total } = useCart();
+    console.log(cart);
   return (
     <div className="p-6 max-w-3xl mx-auto">
       <PageHead title="Your Cart" />
@@ -19,7 +20,7 @@ const CartPage = () => {
         <div className="space-y-6">
           {cart.map((item) => (
             <div
-              key={item.id}
+              key={item._id}
               className="flex items-center justify-between border-b pb-4"
             >
               {/* Product Info */}
@@ -42,14 +43,14 @@ const CartPage = () => {
               {/* Quantity Controls */}
               <div className="flex items-center gap-3">
                 <Button
-                  onClick={() => decreaseQuantity(item.id)}
+                  onClick={() => decreaseQuantity(item._id)}
                   className="px-2 py-1 border rounded"
                 >
                   -
                 </Button>
                 <span>{item.quantity}</span>
                 <Button
-                  onClick={() => increaseQuantity(item.id)}
+                  onClick={() => increaseQuantity(item._id)}
                   className="px-2 py-1 border rounded"
                 >
                   +
@@ -58,7 +59,7 @@ const CartPage = () => {
 
               {/* Remove */}
               <Button
-                onClick={() => removeFromCart(item.id)}
+                onClick={() => removeFromCart(item._id)}
                 className="text-red-500 hover:underline"
               >
                 Remove

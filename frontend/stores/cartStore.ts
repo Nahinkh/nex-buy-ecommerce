@@ -3,11 +3,11 @@ import { create } from "zustand";
 import { persist as zustandPersist } from "zustand/middleware";
 
 type CartItem = {
-  id: string;
-  name: string;
-  price: number;
-  quantity: number;
-  image: string;
+    _id: string;
+    name: string;
+    price: number;
+    quantity: number;
+    image: string;
 };
 
 type CartState = {
@@ -26,24 +26,33 @@ export const useCartStore = create<CartState>()(
 
             addToCart: (item) =>
                 set((state) => {
-                    const existing = state.cartItems.find((p) => p.id === item.id);
+                    const productId = item._id; // ✅ normalize id
+
+                    const existing = state.cartItems.find((p) => p._id === productId);
+
                     if (existing) {
                         toast.success(`Increased quantity of ${item.name} in cart!`);
                         return {
                             cartItems: state.cartItems.map((p) =>
-                                p.id === item.id
-                                    ? { ...p, quantity: p.quantity + item.quantity }
+                                p._id === productId
+                                    ? { ...p, quantity: p.quantity + (item.quantity || 1) }
                                     : p
                             ),
                         };
                     }
+
                     toast.success(`${item.name} added to cart!`);
-                    return { cartItems: [...state.cartItems, item] };
+                    return {
+                        cartItems: [
+                            ...state.cartItems,
+                            { ...item, id: productId, quantity: item.quantity || 1 }, // ✅ new item always added
+                        ],
+                    };
                 }),
 
             removeFromCart: (id) =>
                 set((state) => ({
-                    cartItems: state.cartItems.filter((item) => item.id !== id),
+                    cartItems: state.cartItems.filter((item) => item._id !== id),
                 })),
 
             clearCart: () => set({ cartItems: [] }),
@@ -53,7 +62,7 @@ export const useCartStore = create<CartState>()(
                     toast.success("Increased item quantity in cart!");
                     return {
                         cartItems: state.cartItems.map((item) =>
-                            item.id === id ? { ...item, quantity: item.quantity + 1 } : item
+                            item._id === id ? { ...item, quantity: item.quantity + 1 } : item
                         ),
                     };
                 }),
@@ -63,13 +72,13 @@ export const useCartStore = create<CartState>()(
                     toast.success("Decreased item quantity in cart!");
                     return {
                         cartItems: state.cartItems.map((item) =>
-                            item.id === id && item.quantity > 1
+                            item._id === id && item.quantity > 1
                                 ? { ...item, quantity: item.quantity - 1 }
                                 : item
                         ),
                     };
                 }),
-                }),
+        }),
         {
             name: "cart-storage", // key in localStorage
         }

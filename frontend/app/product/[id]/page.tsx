@@ -20,7 +20,6 @@ const ProductDetailsPage = () => {
 
     const { data: product, isLoading, error } = useSingleProduct(id);
     const productData = product?.product;
-    console.log(productData);
     const validImages = productData?.images?.filter((img: string) => !!img) || [];
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
@@ -106,11 +105,7 @@ const ProductDetailsPage = () => {
                     {/* Attributes */}
                     {productData?.attributes.map((attr:any) => (
                         <div className="space-y-1" key={attr._id}>
-                            {Object.entries(attr).map(([key, value], idx) => (
-                                <p key={idx} className="text-gray-600">
-                                    <span className="font-medium">{key}:</span> {String(value)}
-                                </p>
-                            ))}
+                            <p><strong>{attr.key}:</strong> {String(attr.value)}</p>
                         </div>
                     ))}
                     {inStock && (
