@@ -18,7 +18,10 @@ export const handleImageUpload = async (files: Express.Multer.File[], category: 
 
 
 
-export const handleCategory = async (category: string, newCategory?: string): Promise<Types.ObjectId> => {
+export const handleCategory = async (
+  category: string,
+  newCategory?: string
+): Promise<Types.ObjectId> => {
   if (category === "new-category" && newCategory) {
     const newCategoryDoc = await Category.create({
       name: newCategory,
@@ -27,10 +30,16 @@ export const handleCategory = async (category: string, newCategory?: string): Pr
     return newCategoryDoc._id as Types.ObjectId;
   }
 
-  const categoryDoc = await Category.findOne({ name: category });
+  let categoryDoc = await Category.findOne({ name: category });
+
   if (!categoryDoc) {
-    throw new Error("Category not found");
+    // Auto-create category if it doesn’t exist
+    categoryDoc = await Category.create({
+      name: category,
+      slug: category.toLowerCase().replace(/ /g, "-"),
+    });
   }
+
   return categoryDoc._id as Types.ObjectId;
 };
 

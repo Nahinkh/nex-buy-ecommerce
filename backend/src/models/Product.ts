@@ -1,14 +1,14 @@
 
-import mongoose, { Document } from "mongoose";
+import mongoose, { Document,Types } from "mongoose";
 
 interface IProduct extends Document {
   name: string;
   description: string;
   price: number;
-  category: mongoose.Schema.Types.ObjectId;
+  category: Types.ObjectId;
   inStock: boolean;
   newCategory?: string;
-  attributes:{key: string; value: string}[]; 
+  attributes: { key: string; value: string }[];
   images: string[];
 }
 

@@ -20,7 +20,7 @@ const ProductDetailsPage = () => {
 
     const { data: product, isLoading, error } = useSingleProduct(id);
     const productData = product?.product;
-
+    console.log(productData);
     const validImages = productData?.images?.filter((img: string) => !!img) || [];
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
@@ -104,15 +104,15 @@ const ProductDetailsPage = () => {
                     </p>
 
                     {/* Attributes */}
-                    {productData?.attributes && (
-                        <div className="space-y-1">
-                            {Object.entries(productData?.attributes).map(([key, value], idx) => (
+                    {productData?.attributes.map((attr:any) => (
+                        <div className="space-y-1" key={attr._id}>
+                            {Object.entries(attr).map(([key, value], idx) => (
                                 <p key={idx} className="text-gray-600">
                                     <span className="font-medium">{key}:</span> {String(value)}
                                 </p>
                             ))}
                         </div>
-                    )}
+                    ))}
                     {inStock && (
                         <div className="flex items-center gap-2 w-52">
                             <Button className='bg-green-500 text-white hover:bg-green-600 transition' 

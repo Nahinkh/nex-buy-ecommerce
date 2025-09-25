@@ -136,7 +136,6 @@ export default function UpdateProductPage() {
       const res = await axiosInstance.put(`/product/update/${_id}`, payload, {
         headers: { "Content-Type": "multipart/form-data" },
       });
-
       if (res.status === 200) {
         toast.success("Product updated successfully");
         router.push("/dashboard/products");

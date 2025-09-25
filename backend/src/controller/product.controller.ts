@@ -56,26 +56,63 @@ export const getProducts = asyncHandler(async (req: Request, res: Response) => {
 
 
 export const updateProduct = asyncHandler(async (req: Request, res: Response) => {
+  const { name, price, category, description, inStock, newCategory } = req.body;
+  const files = (req as Request & { files?: Express.Multer.File[] }).files;
+
+  // ✅ attributes parsing
+  let attributes: { key: string; value: string }[] | undefined;
+  if (req.body.attributes) {
+    try {
+      attributes = JSON.parse(req.body.attributes);
+      if (!Array.isArray(attributes)) {
+        return res.status(400).json({ message: "Attributes must be an array" });
+      }
+    } catch (err) {
+      return res.status(400).json({ message: "Invalid attributes format" });
+    }
+  }
+
+
   try {
-    const { id } = req.params;
+    const product = await Product.findById(req.params.id);
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
 
-    const data = {
-      ...req.body,
-      inStock: req.body.inStock === "true" || req.body.inStock === true, 
-      attributes: req.body.attributes ? JSON.parse(req.body.attributes) : undefined,
-      files: (req as Request & { files?: Express.Multer.File[] }).files,
-      keepExistingImages: req.body.keepExistingImages
-        ? JSON.parse(req.body.keepExistingImages)
-        : undefined,
-    };
+    // ✅ Handle image upload if new files exist
+    let imageUrls: string[] = product.images;
+    if (files && files.length > 0) {
+      const uploaded = await handleImageUpload(files, category || product.category.toString());
+      // You can choose to **append** or **replace** old images
+      imageUrls = [...product.images, ...uploaded]; // append
+      // imageUrls = uploaded; // replace
+    }
 
-    const product = await updateProductService(id, data);
-    res.status(200).json({ message: "Product updated successfully", product });
+    // ✅ Handle category
+    let categoryId = product.category;
+    if (category || newCategory) {
+      categoryId = await handleCategory(category || "new-category", newCategory);
+    }
+    product.category = categoryId;
+
+    // ✅ Update product fields
+    product.name = name || product.name;
+    product.description = description || product.description;
+    product.price = price || product.price;
+    product.category = categoryId;
+    product.inStock = inStock !== undefined ? inStock : product.inStock;
+    product.images = imageUrls;
+    if (attributes) product.attributes = attributes;
+
+    await product.save();
+
+    return res.status(200).json({ message: "Product updated successfully", product });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Internal server error" });
+    return res.status(500).json({ message: "Internal server error" });
   }
 });
+
 
 export const getSingleProduct = asyncHandler(async (req: Request, res: Response) => {
   const { id } = req.params
