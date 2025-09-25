@@ -1,8 +1,6 @@
 'use client'
 import Image from 'next/image'
-import React, { useEffect, useState } from 'react'
-import { Button } from './ui/button';
-import { Carousel, CarouselApi, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from './ui/carousel';
+import React, { useState } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 const HeroBanner = () => {

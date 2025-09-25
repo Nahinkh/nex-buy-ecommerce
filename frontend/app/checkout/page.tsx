@@ -12,6 +12,7 @@ const CheckoutPage = () => {
     const { cart, total, clearCart } = useCart();
     const router = useRouter();
     const { data: user } = useProfile();
+    const [error, setError] = useState<string | null>(null);
     const [paymentMethod, setPaymentMethod] = useState<'cod' | 'card'>('cod');
     const { mutate: checkoutMutation, isPending } = useCheckout();
     const [form, setForm] = useState({
@@ -51,35 +52,48 @@ const CheckoutPage = () => {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-
-        if (cart.length === 0) {
-            alert("Your cart is empty!");
+        if (!user) {
+            toast.error("Please log in to place an order.");
             return;
         }
-        let orderData = {
-            cartItems: cart,
-            totalAmount: total,
-            shippingAddress: form.address,
-            paymentMethod: paymentMethod,
-            phone: form.phone,
+        if (!form.address || !form.phone) {
+            setError("Please fill in all required fields.");
+            toast.error("Please fill in all required fields.");
+            return;
         }
-        if (paymentMethod === 'card') {
-            orderData={...orderData,paymentMethod:'card'}
-            checkoutMutation(orderData, {
-            onSuccess: (data) => {
-                toast.success(data.message || "Order placed successfully!");
-            }
-        });
+        try {
 
-        }
-        checkoutMutation(orderData, {
-            onSuccess: (data) => {
-                toast.success(data.message || "Order placed successfully!");
+            if (cart.length === 0) {
+                toast.error("Your cart is empty!");
+                return;
             }
-        });
-        clearCart();
-        setForm({ address: '', phone: '' });
-        router.push('/');
+            let orderData = {
+                cartItems: cart,
+                totalAmount: total,
+                shippingAddress: form.address,
+                paymentMethod: paymentMethod,
+                phone: form.phone,
+            }
+            if (paymentMethod === 'card') {
+                orderData = { ...orderData, paymentMethod: 'card' }
+                checkoutMutation(orderData, {
+                    onSuccess: (data) => {
+                        toast.success(data.message || "Order placed successfully!");
+                    }
+                });
+
+            }
+            checkoutMutation(orderData, {
+                onSuccess: (data) => {
+                    toast.success(data.message || "Order placed successfully!");
+                }
+            });
+            clearCart();
+            setForm({ address: '', phone: '' });
+            router.push('/order-success');
+        } catch (error) {
+            toast.error("An error occurred while placing your order.");
+        }
     };
     return (
         <div className="max-w-2xl mx-auto p-6">
@@ -208,7 +222,7 @@ const CheckoutPage = () => {
                 <div className="border p-4 rounded-lg">
                     <h2 className="text-lg font-semibold mb-3">Order Summary</h2>
                     {cart.map((item) => (
-                        <div key={item.id} className="flex justify-between">
+                        <div key={item._id} className="flex justify-between">
                             <span>
                                 {item.name} × {item.quantity}
                             </span>

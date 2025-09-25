@@ -1,8 +1,6 @@
 'use client'
 import React from 'react'
 import { Card, CardContent, CardFooter } from './ui/card'
-import { Heart } from 'lucide-react'
-import Image from 'next/image'
 import Link from 'next/link'
 import { Button } from './ui/button'
 import { useCart } from '@/hooks/useCart'
@@ -23,7 +21,6 @@ interface ProductCardProps {
 
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     const {addToCart} =useCart()
-    console.log(product);
     return (
         
            <Card key={product._id} className="hover:shadow-lg transition h-[400px]">

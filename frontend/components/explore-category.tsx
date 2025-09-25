@@ -1,7 +1,6 @@
 import { useCategories } from '@/hooks/useCategory';
 import React from 'react'
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from './ui/carousel';
-import { Card, CardContent } from './ui/card';
 import Link from 'next/link';
 
 

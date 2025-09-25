@@ -1,6 +1,4 @@
 import React from 'react'
-import { Card, CardContent } from './ui/card'
-import { Home, Shirt, ShoppingBag, Smartphone, Watch } from 'lucide-react'
 import Link from 'next/link'
 import { useCategories } from '@/hooks/useCategory'
 

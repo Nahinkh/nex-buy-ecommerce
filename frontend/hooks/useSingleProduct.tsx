@@ -13,6 +13,6 @@ export function useSingleProduct(id: string) {
   return useQuery({
     queryKey: ["product", id],
     queryFn: () => fetchProduct(id),
-    enabled: !!id, // fetch only if id exists
+    enabled: !!id,
   });
 }

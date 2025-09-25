@@ -26,7 +26,7 @@ export const useCartStore = create<CartState>()(
 
             addToCart: (item) =>
                 set((state) => {
-                    const productId = item._id; // ✅ normalize id
+                    const productId = item._id; 
 
                     const existing = state.cartItems.find((p) => p._id === productId);
 
@@ -45,7 +45,7 @@ export const useCartStore = create<CartState>()(
                     return {
                         cartItems: [
                             ...state.cartItems,
-                            { ...item, id: productId, quantity: item.quantity || 1 }, // ✅ new item always added
+                            { ...item, id: productId, quantity: item.quantity || 1 },
                         ],
                     };
                 }),
@@ -80,7 +80,7 @@ export const useCartStore = create<CartState>()(
                 }),
         }),
         {
-            name: "cart-storage", // key in localStorage
+            name: "cart-storage",
         }
     )
 );
