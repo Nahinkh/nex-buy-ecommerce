@@ -112,7 +112,7 @@ const ProductDetailsPage = () => {
                         <div className="flex items-center gap-2 w-52">
                             <Button className='bg-green-500 text-white hover:bg-green-600 transition' 
                             onClick={() => decreaseQuantity(productData._id)} >-</Button>
-                            <span className='font-medium p-4'>{cart.find(item => item.id === productData._id)?.quantity ?? 1} </span>
+                            <span className='font-medium p-4'>{cart.find(item => item._id === productData._id)?.quantity ?? 1} </span>
                             <Button className='bg-green-500 text-white hover:bg-green-600 transition' onClick={() => increaseQuantity(productData._id)}>+</Button>
                         </div>
                     )}
@@ -122,7 +122,7 @@ const ProductDetailsPage = () => {
                         className="mt-6 w-full py-3.5 bg-green-500 text-white hover:bg-green-600 transition"
                         disabled={!inStock}
                         onClick={() => addToCart({
-                            id: productData._id,
+                            _id: productData._id,
                             name: productData.name,
                             price: productData.price,
                             quantity,
