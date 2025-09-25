@@ -1,23 +1,26 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useSearchParams } from "next/navigation";
 import ProductCard from "@/components/product-card";
 import { useProducts } from "@/hooks/useProducts";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+interface ProductsPageProps {
+  searchParams?: {
+    category?: string;
+    search?: string;
+  };
+}
 
-export default function ProductsClient() {
+export default function ProductsClient({searchParams}: ProductsPageProps) {
   const [sortBy, setSortBy] = useState("newest");
   const [currentPage, setCurrentPage] = useState(1);
   const [category, setCategory] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
 
-  const searchParams = useSearchParams();
-
   useEffect(() => {
-    setCategory(searchParams.get("category"));
-    setSearchQuery(searchParams.get("search")?.toLowerCase() || "");
+    setCategory(searchParams?.category || null);
+    setSearchQuery(searchParams?.search?.toLowerCase() || "");
   }, [searchParams]);
 
   const { data, isLoading, isError } = useProducts();
